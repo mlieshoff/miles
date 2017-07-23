@@ -112,6 +112,7 @@
         <module>mig</module>
         <module>evolution</module>
         <module>devtool</module>
+        <module>gramma</module>
     </modules>
 
     <profiles>

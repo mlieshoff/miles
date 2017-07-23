@@ -1,5 +1,7 @@
 package org.mili.utils.sql;
 
+import org.mili.utils.Function;
+
 import java.util.List;
 
 /**
@@ -7,7 +9,7 @@ import java.util.List;
  */
 public class JdbcTemplate {
 
-    public <O> List<O> list(String query, Function<I, O> function) {
+    public <I, O> List<O> list(String query, Function<I, O> function) {
         return null;
     }
 
