@@ -1,4 +1,5 @@
-package org.mili.gramma.german.satz;
+package org.mili.gramma;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,20 +17,28 @@ package org.mili.gramma.german.satz;
  * limitations under the License.
  */
 
-import org.mili.gramma.german.Element;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Michael Lieshoff
  */
-public abstract class Satz extends Element {
+public class Text {
 
-    private final List<Element> elements = new ArrayList<>();
+    private final List<Sentence> sentences = new ArrayList<>();
 
-    public List<Element> getElements() {
-        return elements;
+    public List<Sentence> getSentences() {
+        return sentences;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Sentence sentence : sentences) {
+            s.append(sentence);
+            s.append("\n");
+        }
+        return s.toString();
     }
 
 }

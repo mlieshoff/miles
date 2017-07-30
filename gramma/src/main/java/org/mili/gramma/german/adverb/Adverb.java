@@ -16,12 +16,12 @@ package org.mili.gramma.german.adverb;
  * limitations under the License.
  */
 
-import org.mili.gramma.german.satz.Wort;
+import org.mili.gramma.Word;
 
 /**
  * @author Michael Lieshoff
  */
-public class Adverb extends Wort {
+public class Adverb extends Word {
 
     public Adverb(String buchstaben) {
         super(buchstaben);

@@ -1,4 +1,4 @@
-package org.mili.gramma.german.satz;
+package org.mili.gramma;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,21 +16,19 @@ package org.mili.gramma.german.satz;
  * limitations under the License.
  */
 
-import org.mili.gramma.german.Element;
-
 /**
  * @author Michael Lieshoff
  */
-public class Wort extends Element {
+public class Word extends Element {
 
-    private final String buchstaben;
+    private final String chars;
 
-    public Wort(String buchstaben) {
-        this.buchstaben = buchstaben;
+    public Word(String chars) {
+        this.chars = chars;
     }
 
-    public String getBuchstaben() {
-        return buchstaben;
+    public String getChars() {
+        return chars;
     }
 
 }

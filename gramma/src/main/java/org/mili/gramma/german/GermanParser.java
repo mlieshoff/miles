@@ -17,8 +17,9 @@
 package org.mili.gramma.german;
 
 import org.mili.gramma.Parser;
-
-import java.util.StringTokenizer;
+import org.mili.gramma.Sentence;
+import org.mili.gramma.Text;
+import org.mili.gramma.Word;
 
 /**
  * @author Michael Lieshoff
@@ -26,10 +27,28 @@ import java.util.StringTokenizer;
 public class GermanParser implements Parser {
 
     @Override
-    public void parse(String text) {
-        StringTokenizer stringTokenizer = new StringTokenizer(text, " ,.");
-        while (stringTokenizer.hasMoreElements()) {
-            System.out.println(stringTokenizer.nextElement());
+    public void parse(String s) {
+        Text text = new Text();
+        StringBuilder word = new StringBuilder();
+        Sentence sentence = new Sentence();
+        text.getSentences().add(sentence);
+        for (int i = 0, n = s.length(); i < n; i ++) {
+            boolean addWord = false;
+            char c = s.charAt(i);
+            if (' ' == c) {
+                addWord = true;
+            } else if (',' == c) {
+                addWord = true;
+            } else if ('.' == c) {
+                addWord = true;
+            } else {
+                word.append(c);
+            }
+            if (addWord && word.length() > 0) {
+                sentence.getElements().add(new Word(word.toString()));
+                word.setLength(0);
+            }
         }
+        System.out.println(text);
     }
 }

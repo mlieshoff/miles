@@ -16,9 +16,11 @@ package org.mili.gramma.german.satz;
  * limitations under the License.
  */
 
+import org.mili.gramma.Sentence;
+
 /**
  * @author Michael Lieshoff
  */
-public class Aussagesatz extends Satz {
+public class Aussagesatz extends Sentence {
 
 }

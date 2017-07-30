@@ -16,8 +16,8 @@
  */
 package org.mili.gramma.german.nomen;
 
-import org.mili.gramma.german.Element;
-import org.mili.gramma.german.satz.Wort;
+import org.mili.gramma.Element;
+import org.mili.gramma.Word;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +27,9 @@ import java.util.List;
  */
 public class Nominalgruppe extends Element {
 
-    private final List<Wort> elements = new ArrayList<>();
+    private final List<Word> elements = new ArrayList<>();
 
-    public List<Wort> getElements() {
+    public List<Word> getElements() {
         return elements;
     }
 

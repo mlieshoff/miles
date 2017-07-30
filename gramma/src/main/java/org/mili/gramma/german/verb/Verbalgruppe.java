@@ -16,7 +16,7 @@
  */
 package org.mili.gramma.german.verb;
 
-import org.mili.gramma.german.Element;
+import org.mili.gramma.Element;
 
 import java.util.ArrayList;
 import java.util.List;

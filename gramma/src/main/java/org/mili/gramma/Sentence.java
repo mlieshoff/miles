@@ -1,3 +1,4 @@
+package org.mili.gramma;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,10 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mili.gramma.german.adverb;
-
-import org.mili.gramma.Element;
-import org.mili.gramma.Word;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +22,27 @@ import java.util.List;
 /**
  * @author Michael Lieshoff
  */
-public class Adverbialgruppe extends Element {
+public class Sentence extends Element {
 
-    private final List<Word> elements = new ArrayList<>();
+    private final List<Element> elements = new ArrayList<>();
 
-    public List<Word> getElements() {
+    public List<Element> getElements() {
         return elements;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Element element : elements) {
+            if (element instanceof Word) {
+                s.append(((Word) element).getChars());
+            } else if (element instanceof Sentence) {
+                s.append("    ");
+                s.append(element);
+            }
+            s.append("\n");
+        }
+        return s.toString();
     }
 
 }

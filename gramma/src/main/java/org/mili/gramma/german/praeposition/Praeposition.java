@@ -16,12 +16,12 @@
  */
 package org.mili.gramma.german.praeposition;
 
-import org.mili.gramma.german.satz.Wort;
+import org.mili.gramma.Word;
 
 /**
  * @author Michael Lieshoff
  */
-public class Praeposition extends Wort {
+public class Praeposition extends Word {
 
     public Praeposition(String buchstaben) {
         super(buchstaben);

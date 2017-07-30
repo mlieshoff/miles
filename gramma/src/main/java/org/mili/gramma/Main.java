@@ -25,7 +25,7 @@ public class Main {
 
     public static void main(String[] args) {
         Parser parser = new GermanParser();
-        parser.parse("Ich gehe in das Schwimmbad.");
+        parser.parse("Ich gehe in das Schwimmbad. Dort werde ich ein paar Runden schwimmen, bis ich wieder nach Hause gehe.");
     }
 
 }

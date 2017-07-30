@@ -16,9 +16,11 @@ package org.mili.gramma.german.satz;
  * limitations under the License.
  */
 
+import org.mili.gramma.Sentence;
+
 /**
  * @author Michael Lieshoff
  */
-public class Nebensatz extends Satz {
+public class Nebensatz extends Sentence {
 
 }

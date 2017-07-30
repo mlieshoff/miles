@@ -16,12 +16,12 @@
  */
 package org.mili.gramma.german.nomen;
 
-import org.mili.gramma.german.satz.Wort;
+import org.mili.gramma.Word;
 
 /**
  * @author Michael Lieshoff
  */
-public class Nomen extends Wort {
+public class Nomen extends Word {
 
     public Nomen(String buchstaben) {
         super(buchstaben);
