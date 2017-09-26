@@ -1,10 +1,12 @@
 package org.mili.devtool;
 
-import java.util.*;
+import java.util.List;
 
+/**
+ * @author Michael Lieshoff, 28.07.17
+ */
 public interface Connector {
 
-    List<Key> search(String query);
-    List<Content> get(Key key);
+    List<Entry> search(String query);
 
 }

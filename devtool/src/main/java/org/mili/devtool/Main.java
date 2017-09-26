@@ -1,5 +1,7 @@
 package org.mili.devtool;
 
+import org.mili.utils.ApplicationData;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -8,17 +10,13 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URL;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.List;
-import java.util.zip.ZipFile;
 
 public class Main {
 
-    private JFrame frame = new JFrame("DevTool V0.1");
+    private JFrame frame = new JFrame("DevTool V0.2");
     private JTextArea content = new JTextArea();
     private JTextField searchField = new JTextField();
     private Connector connector;
@@ -26,27 +24,17 @@ public class Main {
     private Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
     private Main() throws Exception {
-        BufferedInputStream in = new BufferedInputStream(new URL(
-                "http://localhost:8088/test/devtool-res-en.zip").openStream());
-        File temp = File.createTempFile("devtool-data", ".zip");
-        FileOutputStream fos = new FileOutputStream(temp);
-        BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
-        byte[] data = new byte[1024];
-        int x = 0;
-        while((x = in.read(data, 0, 1024))>=0) {
-            bout.write(data, 0, x);
-        }
-        bout.close();
-        in.close();
-        connector = new DefaultConnector(new DefaultAdapter(new ZipFile(temp)));
+        connector = new DefaultConnector(ApplicationData.create("devtool"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(640, 480);
+        frame.setLocation(2000, 50);
+
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 2, 5, 5));
-
         panel.add(createSearchPanel());
         panel.add(createContentPanel());
         frame.add(panel);
+
         frame.pack();
         frame.setVisible(true);
     }
@@ -63,6 +51,27 @@ public class Main {
     }
 
     private Component createSearchControlPanel() {
+        searchField.addKeyListener(new KeyListener(){
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    resultTableModel.refresh(doSearch(searchField.getText()));
+                    resultTableModel.fireTableDataChanged();
+                    frame.repaint();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createLineBorder(Color.black));
         panel.setLayout(new BorderLayout(5, 5));
@@ -77,6 +86,7 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
                 resultTableModel.refresh(doSearch(searchField.getText()));
+                resultTableModel.fireTableDataChanged();
                 frame.repaint();
             }
         });
@@ -92,19 +102,12 @@ public class Main {
         lsm.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting()) {
+                int first = e.getFirstIndex();
+                int last = e.getLastIndex();
+                if (e.getValueIsAdjusting() || Math.abs(first - last) == 1) {
                     int index = table.getSelectedRow();
-                    Key key = resultTableModel.getKey(index);
-                    List<Content> list = connector.get(key);
-                    StringBuilder s = new StringBuilder();
-                    for(Content content : list) {
-                        s.append("*** ");
-                        s.append(content.getName());
-                        s.append(" ***\n\n");
-                        s.append(content.getText());
-                        s.append("\n\n");
-                    }
-                    content.setText(s.toString());
+                    Entry entry = resultTableModel.getEntry(index);
+                    content.setText(entry == null ? "" : entry.getContent());
                 }
             }
         });
@@ -145,7 +148,7 @@ public class Main {
         return button;
     }
 
-    private List<Key> doSearch(String query) {
+    private List<Entry> doSearch(String query) {
         return connector.search(query);
     }
 
