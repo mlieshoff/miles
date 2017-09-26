@@ -16,12 +16,12 @@
  */
 package org.mili.gramma.german.konjunktion;
 
-import org.mili.gramma.german.satz.Wort;
+import org.mili.gramma.Word;
 
 /**
  * @author Michael Lieshoff
  */
-public class Konjunktion extends Wort {
+public class Konjunktion extends Word {
 
     public Konjunktion(String buchstaben) {
         super(buchstaben);

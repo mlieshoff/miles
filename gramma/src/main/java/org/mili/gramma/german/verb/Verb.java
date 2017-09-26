@@ -16,12 +16,12 @@
  */
 package org.mili.gramma.german.verb;
 
-import org.mili.gramma.german.satz.Wort;
+import org.mili.gramma.Word;
 
 /**
  * @author Michael Lieshoff
  */
-public class Verb extends Wort {
+public class Verb extends Word {
 
     public Verb(String buchstaben) {
         super(buchstaben);
