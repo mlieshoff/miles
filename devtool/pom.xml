@@ -25,7 +25,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>org.mili.org.mili.devtool.Main</mainClass>
+                            <mainClass>org.mili.devtool.Main</mainClass>
                         </manifest>
                     </archive>
 

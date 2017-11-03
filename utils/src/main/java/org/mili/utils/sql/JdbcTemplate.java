@@ -1,66 +1,53 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.mili.utils.sql;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import org.mili.utils.Log;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author Michael Lieshoff, 07.07.17
- */
 public class JdbcTemplate {
 
     private ConnectionPool connectionPool = new ConnectionPool();
+    private Map<String, PreparedStatement> cache = new ConcurrentHashMap<>();
 
-    private LoadingCache<String, PreparedStatement> cache = CacheBuilder.<String, PreparedStatement>newBuilder()
-            .expireAfterWrite(Long.getLong("org.mili.utils.sql.JdbcTemplate", 60 * 1000 * 5), TimeUnit.MILLISECONDS)
-            .build(new CacheLoader<String, PreparedStatement>() {
-                @Override
-                public PreparedStatement load(String query) throws Exception {
-                    ConnectionPool.ConnectionContext connectionContext = connectionPool.get();
-                    Connection connection = connectionContext.getConnection();
-                    return connection.prepareStatement(query);
-                }
-            });
-
-    public <T> Collection<T> query(RowTransformer<T> rowTransformer, String query, Object... params) {
-        try {
-            query = normalize(query);
-            PreparedStatement preparedStatement = cache.get(query);
-            fillWithObjects(preparedStatement, params);
-            List<T> list = new ArrayList<>();
-            ResultSet result = preparedStatement.executeQuery();
-            while(result.next()) {
-                list.add(rowTransformer.transform(result));
-            }
-            System.out.println(connectionPool.get() + " - size: " + list.size());
-            preparedStatement.close();
-            return list;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+    protected <T> List<T> query(RowTransformer<T> rowTransformer, String sql, Object... objects) throws SQLException {
+        sql = normalize(sql);
+        Log.info(this, "query", connectionPool.get() + " - query: " + sql);
+        PreparedStatement preparedStatement = cache.get(sql);
+        if (preparedStatement == null) {
+            preparedStatement = connectionPool.get().getConnection().prepareStatement(sql);
+            cache.put(sql, preparedStatement);
         }
-    }
-
-    public <T> T one(RowTransformer<T> rowTransformer, String query, Object... params) {
-        return null;
-    }
-
-    public int update(String query, Object... params) {
-        return 0;
-    }
-
-    private String normalize(String sql) {
-        sql = sql.replace("\r\n", "").replace("\n", "");
-        sql = sql.replaceAll("\\s\\s+"," ");
-        return sql;
+        fillWithObjects(preparedStatement, objects);
+        List<T> list = new ArrayList<>();
+        ResultSet result = preparedStatement.executeQuery();
+        while(result.next()) {
+            Log.info(this, "query", (connectionPool.get() + " - call transformer"));
+            list.add(rowTransformer.transform(result));
+        }
+        Log.info(this, "query", (connectionPool.get() + " - size: " + list.size()));
+        return list;
     }
 
     private void fillWithObjects(PreparedStatement preparedStatement, Object[] objects) throws SQLException {
@@ -71,9 +58,63 @@ public class JdbcTemplate {
                     o = o.toString().trim();
                 }
                 preparedStatement.setObject(i + 1, o);
-                System.out.println("    " + (i + 1) + " = " + o);
+                Log.info(this, "fillWithObjects", "    " + (i + 1) + " = " + o);
             }
         }
+    }
+
+    protected <T> T querySingle(RowTransformer<T> rowTransformer, String sql, Object... objects) throws SQLException {
+        List<T> list = query(rowTransformer, sql, objects);
+        int size = list.size();
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            return list.get(0);
+        } else {
+            throw new IllegalStateException("more than 1 result found[" + size + "]!");
+        }
+    }
+
+    private String normalize(String sql) {
+        sql = sql.replace("\r\n", "").replace("\n", "");
+        sql = sql.replaceAll("\\s\\s+"," ");
+        return sql;
+    }
+
+    protected int update(String sql, Object... objects) throws SQLException {
+        sql = normalize(sql);
+        Log.info(this, "update", connectionPool.get() + " - update: " + sql);
+        PreparedStatement preparedStatement = cache.get(sql);
+        if (preparedStatement == null) {
+            preparedStatement = connectionPool.get().getConnection().prepareStatement(sql);
+            cache.put(sql, preparedStatement);
+        }
+        fillWithObjects(preparedStatement, objects);
+        return preparedStatement.executeUpdate();
+    }
+
+    protected boolean execute(String sql, Object... objects) throws SQLException {
+        sql = normalize(sql);
+        Log.info(this, "execute", connectionPool.get() + " - execute: " + sql);
+        PreparedStatement preparedStatement = cache.get(sql);
+        if (preparedStatement == null) {
+            preparedStatement = connectionPool.get().getConnection().prepareStatement(sql);
+            cache.put(sql, preparedStatement);
+        }
+        if (objects != null) {
+            for (int i = 0; i < objects.length; i ++) {
+                Object o = objects[i];
+                if (o instanceof String) {
+                    o = o.toString().trim();
+                }
+                preparedStatement.setObject(i + 1, o);
+            }
+        }
+        return preparedStatement.execute();
+    }
+
+    protected long getTransactionCreationTime() throws SQLException {
+        return connectionPool.get().getCreationTime();
     }
 
 }
