@@ -113,6 +113,8 @@
         <module>evolution</module>
         <module>devtool</module>
         <module>gramma</module>
+        <module>sound</module>
+        <module>generator</module>
     </modules>
 
     <profiles>

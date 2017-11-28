@@ -54,13 +54,14 @@ public class ConnectionPool {
     }
 
     private ConnectionPool.ConnectionContext connection(boolean autoReconnect) throws Exception {
-        String host = Optional.fromNullable(System.getenv("OPENSHIFT_MYSQL_DB_HOST")).or("localhost");
-        String port = Optional.fromNullable(System.getenv("OPENSHIFT_MYSQL_DB_PORT")).or("3306");
-        String username = Optional.fromNullable(System.getenv("OPENSHIFT_MYSQL_DB_USERNAME")).or("root");
-        String password = Optional.fromNullable(System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD")).or("");
-        String url = "jdbc:mysql://" + host + ":" + port + "/sayit?useUnicode=true&characterEncoding=utf-8";
+        String prefix = "org.mili.database.";
+        String host = Optional.fromNullable(System.getProperty(prefix + "host")).or("localhost");
+        String port = Optional.fromNullable(System.getProperty(prefix + "port")).or("3306");
+        String username = Optional.fromNullable(System.getProperty(prefix + "username")).or("root");
+        String password = Optional.fromNullable(System.getProperty(prefix + "password")).or("");
+        String url = System.getProperty(prefix + "url");
         if (autoReconnect) {
-            url += "?autoReconnect=true";
+            url += "&autoReconnect=true";
         }
         Class.forName("com.mysql.jdbc.Driver");
         return new ConnectionPool.ConnectionContext(DriverManager.getConnection(url, username, password));
