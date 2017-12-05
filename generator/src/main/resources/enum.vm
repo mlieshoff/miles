@@ -1,0 +1,11 @@
+package $package;
+
+public enum $classname {
+
+#foreach( $const in $constlist )
+    $const.value#if($foreach.count < $constlist.size()),
+    #else;
+    #end
+#end
+
+}

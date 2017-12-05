@@ -15,14 +15,15 @@
     <xs:complexType name="modelType">
         <xs:sequence>
             <xs:element type="classType" name="class" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="enumType" name="enum" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
-        <xs:attribute type="xs:string" name="package"/>
     </xs:complexType>
     <xs:complexType name="classType">
         <xs:sequence>
             <xs:element type="memberType" name="member" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="alias" use="optional"/>
         <xs:attribute type="xs:string" name="extends" use="optional"/>
         <xs:attribute type="xs:string" name="implements" use="optional"/>
     </xs:complexType>
@@ -47,5 +48,15 @@
         </xs:sequence>
         <xs:attribute type="xs:string" name="name"/>
         <xs:attribute type="xs:string" name="extends" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="enumType">
+        <xs:sequence>
+            <xs:element type="constType" name="const" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="implements" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="constType">
+        <xs:attribute type="xs:string" name="value"/>
     </xs:complexType>
 </xs:schema>

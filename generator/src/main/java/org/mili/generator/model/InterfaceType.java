@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für interfaceType complex type.
+ * <p>Java class for interfaceType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="interfaceType">
@@ -72,7 +72,7 @@ public class InterfaceType {
     }
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ public class InterfaceType {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ public class InterfaceType {
     }
 
     /**
-     * Ruft den Wert der extends-Eigenschaft ab.
+     * Gets the value of the extends property.
      * 
      * @return
      *     possible object is
@@ -108,7 +108,7 @@ public class InterfaceType {
     }
 
     /**
-     * Legt den Wert der extends-Eigenschaft fest.
+     * Sets the value of the extends property.
      * 
      * @param value
      *     allowed object is

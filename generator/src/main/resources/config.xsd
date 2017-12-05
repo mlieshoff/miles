@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config" type="configType"/>
+    <xs:complexType name="configType">
+        <xs:sequence>
+            <xs:element type="forType" name="for" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="package"/>
+    </xs:complexType>
+    <xs:complexType name="forType">
+        <xs:sequence>
+            <xs:element type="templateType" name="template" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="type"/>
+    </xs:complexType>
+    <xs:complexType name="templateType">
+        <xs:attribute type="xs:string" name="name"/>
+    </xs:complexType>
+</xs:schema>

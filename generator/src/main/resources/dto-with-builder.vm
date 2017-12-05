@@ -1,0 +1,46 @@
+package $package;
+
+import com.google.gson.annotations.SerializedName;
+
+public class $classname {
+
+#foreach( $field in $fieldlist )
+    private final $field.type $field.name;
+#end
+
+    public $classname(#foreach( $field in $fieldlist )$field.type $field.name#if($foreach.count < $fieldlist.size()), #end#end) {
+        #foreach( $field in $fieldlist )
+        this.$field.name = $field.name;
+        #end
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        #foreach( $field in $fieldlist )
+        private $field.type $field.name;
+        #end
+        #foreach( $field in $fieldlist )
+
+        public Builder $field.name#[[(]]#$field.type $field.name) {
+            this.$field.name = $field.name;
+            return this;
+        }
+        #end
+
+        public $classname build() {
+            return new $classname(#foreach( $field in $fieldlist )$field.name#if($foreach.count < $fieldlist.size()), #end#end);
+        }
+
+    }
+
+#foreach( $field in $fieldlist )
+    public $field.type get${StringUtils.capitalize($field.name)}() {
+        return ${StringUtils.uncapitalize($field.name)};
+    }
+
+#end
+
+}

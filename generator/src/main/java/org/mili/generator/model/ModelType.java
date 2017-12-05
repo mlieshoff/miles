@@ -5,15 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für modelType complex type.
+ * <p>Java class for modelType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="modelType">
@@ -21,8 +20,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="class" type="{}classType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="enum" type="{}enumType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="package" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -32,14 +31,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "modelType", propOrder = {
-    "clazz"
+    "clazz",
+    "_enum"
 })
 public class ModelType {
 
     @XmlElement(name = "class")
     protected List<ClassType> clazz;
-    @XmlAttribute(name = "package")
-    protected String _package;
+    @XmlElement(name = "enum")
+    protected List<EnumType> _enum;
 
     /**
      * Gets the value of the clazz property.
@@ -71,27 +71,32 @@ public class ModelType {
     }
 
     /**
-     * Ruft den Wert der package-Eigenschaft ab.
+     * Gets the value of the enum property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPackage() {
-        return _package;
-    }
-
-    /**
-     * Legt den Wert der package-Eigenschaft fest.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the enum property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getEnum().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link EnumType }
+     * 
+     * 
      */
-    public void setPackage(String value) {
-        this._package = value;
+    public List<EnumType> getEnum() {
+        if (_enum == null) {
+            _enum = new ArrayList<EnumType>();
+        }
+        return this._enum;
     }
 
 }

@@ -42,11 +42,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ParameterType }
+     * Create an instance of {@link ConstType }
      * 
      */
-    public ParameterType createParameterType() {
-        return new ParameterType();
+    public ConstType createConstType() {
+        return new ConstType();
     }
 
     /**
@@ -63,6 +63,22 @@ public class ObjectFactory {
      */
     public MethodType createMethodType() {
         return new MethodType();
+    }
+
+    /**
+     * Create an instance of {@link EnumType }
+     * 
+     */
+    public EnumType createEnumType() {
+        return new EnumType();
+    }
+
+    /**
+     * Create an instance of {@link ParameterType }
+     * 
+     */
+    public ParameterType createParameterType() {
+        return new ParameterType();
     }
 
     /**

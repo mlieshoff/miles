@@ -1,0 +1,18 @@
+<model>
+    <class name="PaymentWallRequest">
+        <member name="birthday" alias="customer[birthday]" type="long"/>
+        <member name="sex" alias="customer[sex]" type="PaymentWallSex"/>
+        <member name="username" alias="customer[username]" type="String"/>
+        <member name="firstname" alias="customer[firstname]" type="String"/>
+        <member name="lastname" alias="customer[lastname]" type="String"/>
+        <member name="city" alias="customer[city]" type="String"/>
+        <member name="state" alias="customer[state]" type="String"/>
+        <member name="address" alias="customer[address]" type="String"/>
+        <member name="country" alias="customer[country]" type="String"/>
+        <member name="membership" alias="customer[membership]" type="String"/>
+    </class>
+    <enum name="PaymentWallSex">
+        <const value="MALE"/>
+        <const value="FEMALE"/>
+    </enum>
+</model>
