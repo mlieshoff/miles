@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for methodType complex type.
+ * <p>Java-Klasse für methodType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="methodType">
@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="return" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,6 +42,8 @@ public class MethodType {
     protected String name;
     @XmlAttribute(name = "return")
     protected String _return;
+    @XmlAttribute(name = "deprecated")
+    protected Boolean deprecated;
 
     /**
      * Gets the value of the parameter property.
@@ -72,7 +75,7 @@ public class MethodType {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -84,7 +87,7 @@ public class MethodType {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +99,7 @@ public class MethodType {
     }
 
     /**
-     * Gets the value of the return property.
+     * Ruft den Wert der return-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -108,7 +111,7 @@ public class MethodType {
     }
 
     /**
-     * Sets the value of the return property.
+     * Legt den Wert der return-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -117,6 +120,34 @@ public class MethodType {
      */
     public void setReturn(String value) {
         this._return = value;
+    }
+
+    /**
+     * Ruft den Wert der deprecated-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isDeprecated() {
+        if (deprecated == null) {
+            return false;
+        } else {
+            return deprecated;
+        }
+    }
+
+    /**
+     * Legt den Wert der deprecated-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setDeprecated(Boolean value) {
+        this.deprecated = value;
     }
 
 }

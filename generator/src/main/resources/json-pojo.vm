@@ -19,22 +19,59 @@ package $package;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
+#if($field.deprecated)
+@Deprecated
+#end
 @Generated("org.mili.generator")
-public class $classname {
+public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} #end{
+#foreach( $const in $constlist )
+
+    #if($field.deprecated)
+    @Deprecated
+    #end
+    public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
+#end
 
 #foreach( $field in $fieldlist )
+    #if($field.deprecated)
+    @Deprecated
+    #end
     @SerializedName("$field.name")
-    private int $field.name;
+    private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)};
 
 #end
 #foreach( $field in $fieldlist )
-    public void set${StringUtils.capitalize($field.name)}($field.type ${StringUtils.uncapitalize($field.name)}) {
-        this.${StringUtils.uncapitalize($field.name)} = ${StringUtils.uncapitalize($field.name)};
+    #if($field.deprecated)
+    @Deprecated
+    #end
+    #set($fieldname = ${Utils.getJavaName($field.name)})
+    public void set${StringUtils.capitalize($fieldname)}(${Utils.getJavaType($field.type)} ${StringUtils.uncapitalize($fieldname)}) {
+        this.${StringUtils.uncapitalize($fieldname)} = ${StringUtils.uncapitalize($fieldname)};
     }
     
-    public $field.type get${StringUtils.capitalize($field.name)}() {
-        return ${StringUtils.uncapitalize($field.name)};
+    #if($field.deprecated)
+    @Deprecated
+    #end
+    public ${Utils.getJavaType($field.type)} get${StringUtils.capitalize($fieldname)}() {
+        return ${StringUtils.uncapitalize($fieldname)};
     }
     
 #end
+    #if(!$extends.startsWith("map(") && !$extends.startsWith("list("))
+    public String toString() {
+        java.lang.StringBuilder s = new java.lang.StringBuilder();
+        s.append("$classname{");
+        #foreach($field in $fieldlist)
+        #set($fieldname = ${Utils.getJavaName($field.name)})
+        s.append("$fieldname=");
+        s.append($fieldname);
+        #if($foreach.count < $fieldlist.size())
+        s.append(", ");
+        #end
+        #end
+        s.append("}");
+        return s.toString();
+    }
+    #end
+
 }

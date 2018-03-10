@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for configType complex type.
+ * <p>Java-Klasse für configType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="configType">
@@ -71,7 +71,7 @@ public class ConfigType {
     }
 
     /**
-     * Gets the value of the package property.
+     * Ruft den Wert der package-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -83,7 +83,7 @@ public class ConfigType {
     }
 
     /**
-     * Sets the value of the package property.
+     * Legt den Wert der package-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

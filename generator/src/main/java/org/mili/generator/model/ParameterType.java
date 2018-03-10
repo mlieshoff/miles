@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java class for parameterType complex type.
+ * <p>Java-Klasse für parameterType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="parameterType">
@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlValue;
  *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/extension>
  *   &lt;/simpleContent>
  * &lt;/complexType>
@@ -38,9 +39,11 @@ public class ParameterType {
     protected String name;
     @XmlAttribute(name = "type")
     protected String type;
+    @XmlAttribute(name = "deprecated")
+    protected Boolean deprecated;
 
     /**
-     * Gets the value of the value property.
+     * Ruft den Wert der value-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -52,7 +55,7 @@ public class ParameterType {
     }
 
     /**
-     * Sets the value of the value property.
+     * Legt den Wert der value-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +67,7 @@ public class ParameterType {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -76,7 +79,7 @@ public class ParameterType {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -88,7 +91,7 @@ public class ParameterType {
     }
 
     /**
-     * Gets the value of the type property.
+     * Ruft den Wert der type-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -100,7 +103,7 @@ public class ParameterType {
     }
 
     /**
-     * Sets the value of the type property.
+     * Legt den Wert der type-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -109,6 +112,34 @@ public class ParameterType {
      */
     public void setType(String value) {
         this.type = value;
+    }
+
+    /**
+     * Ruft den Wert der deprecated-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isDeprecated() {
+        if (deprecated == null) {
+            return false;
+        } else {
+            return deprecated;
+        }
+    }
+
+    /**
+     * Legt den Wert der deprecated-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setDeprecated(Boolean value) {
+        this.deprecated = value;
     }
 
 }

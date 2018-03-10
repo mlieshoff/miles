@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for enumType complex type.
+ * <p>Java-Klasse für enumType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="enumType">
@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="implements" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -43,6 +44,8 @@ public class EnumType {
     protected String name;
     @XmlAttribute(name = "implements")
     protected String _implements;
+    @XmlAttribute(name = "deprecated")
+    protected Boolean deprecated;
 
     /**
      * Gets the value of the const property.
@@ -74,7 +77,7 @@ public class EnumType {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -86,7 +89,7 @@ public class EnumType {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -98,7 +101,7 @@ public class EnumType {
     }
 
     /**
-     * Gets the value of the implements property.
+     * Ruft den Wert der implements-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -110,7 +113,7 @@ public class EnumType {
     }
 
     /**
-     * Sets the value of the implements property.
+     * Legt den Wert der implements-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -119,6 +122,34 @@ public class EnumType {
      */
     public void setImplements(String value) {
         this._implements = value;
+    }
+
+    /**
+     * Ruft den Wert der deprecated-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isDeprecated() {
+        if (deprecated == null) {
+            return false;
+        } else {
+            return deprecated;
+        }
+    }
+
+    /**
+     * Legt den Wert der deprecated-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setDeprecated(Boolean value) {
+        this.deprecated = value;
     }
 
 }

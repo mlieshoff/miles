@@ -6,25 +6,28 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for classType complex type.
+ * <p>Java-Klasse für classType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="classType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="const" type="{}constType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="member" type="{}memberType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="alias" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="extends" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="implements" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -34,10 +37,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "classType", propOrder = {
+    "_const",
     "member"
 })
 public class ClassType {
 
+    @XmlElement(name = "const")
+    protected List<ConstType> _const;
     protected List<MemberType> member;
     @XmlAttribute(name = "name")
     protected String name;
@@ -47,6 +53,37 @@ public class ClassType {
     protected String _extends;
     @XmlAttribute(name = "implements")
     protected String _implements;
+    @XmlAttribute(name = "deprecated")
+    protected Boolean deprecated;
+
+    /**
+     * Gets the value of the const property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the const property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConst().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link ConstType }
+     * 
+     * 
+     */
+    public List<ConstType> getConst() {
+        if (_const == null) {
+            _const = new ArrayList<ConstType>();
+        }
+        return this._const;
+    }
 
     /**
      * Gets the value of the member property.
@@ -78,7 +115,7 @@ public class ClassType {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -90,7 +127,7 @@ public class ClassType {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -102,7 +139,7 @@ public class ClassType {
     }
 
     /**
-     * Gets the value of the alias property.
+     * Ruft den Wert der alias-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -114,7 +151,7 @@ public class ClassType {
     }
 
     /**
-     * Sets the value of the alias property.
+     * Legt den Wert der alias-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -126,7 +163,7 @@ public class ClassType {
     }
 
     /**
-     * Gets the value of the extends property.
+     * Ruft den Wert der extends-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -138,7 +175,7 @@ public class ClassType {
     }
 
     /**
-     * Sets the value of the extends property.
+     * Legt den Wert der extends-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -150,7 +187,7 @@ public class ClassType {
     }
 
     /**
-     * Gets the value of the implements property.
+     * Ruft den Wert der implements-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -162,7 +199,7 @@ public class ClassType {
     }
 
     /**
-     * Sets the value of the implements property.
+     * Legt den Wert der implements-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -171,6 +208,34 @@ public class ClassType {
      */
     public void setImplements(String value) {
         this._implements = value;
+    }
+
+    /**
+     * Ruft den Wert der deprecated-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isDeprecated() {
+        if (deprecated == null) {
+            return false;
+        } else {
+            return deprecated;
+        }
+    }
+
+    /**
+     * Legt den Wert der deprecated-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setDeprecated(Boolean value) {
+        this.deprecated = value;
     }
 
 }

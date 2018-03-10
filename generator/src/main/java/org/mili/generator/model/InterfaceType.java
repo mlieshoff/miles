@@ -6,13 +6,14 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for interfaceType complex type.
+ * <p>Java-Klasse für interfaceType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="interfaceType">
@@ -20,9 +21,11 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="method" type="{}methodType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="const" type="{}constType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="extends" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -32,15 +35,20 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "interfaceType", propOrder = {
-    "method"
+    "method",
+    "_const"
 })
 public class InterfaceType {
 
     protected List<MethodType> method;
+    @XmlElement(name = "const")
+    protected List<ConstType> _const;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "extends")
     protected String _extends;
+    @XmlAttribute(name = "deprecated")
+    protected Boolean deprecated;
 
     /**
      * Gets the value of the method property.
@@ -72,7 +80,36 @@ public class InterfaceType {
     }
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the const property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the const property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConst().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link ConstType }
+     * 
+     * 
+     */
+    public List<ConstType> getConst() {
+        if (_const == null) {
+            _const = new ArrayList<ConstType>();
+        }
+        return this._const;
+    }
+
+    /**
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -84,7 +121,7 @@ public class InterfaceType {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +133,7 @@ public class InterfaceType {
     }
 
     /**
-     * Gets the value of the extends property.
+     * Ruft den Wert der extends-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -108,7 +145,7 @@ public class InterfaceType {
     }
 
     /**
-     * Sets the value of the extends property.
+     * Legt den Wert der extends-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -117,6 +154,34 @@ public class InterfaceType {
      */
     public void setExtends(String value) {
         this._extends = value;
+    }
+
+    /**
+     * Ruft den Wert der deprecated-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isDeprecated() {
+        if (deprecated == null) {
+            return false;
+        } else {
+            return deprecated;
+        }
+    }
+
+    /**
+     * Legt den Wert der deprecated-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setDeprecated(Boolean value) {
+        this.deprecated = value;
     }
 
 }

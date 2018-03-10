@@ -1,8 +1,0 @@
-<config package="com.mycompany.payment.providers.paymentwall.model">
-    <for type="CLASS">
-        <template name="generator/src/main/resources/dto-with-builder.vm"/>
-    </for>
-    <for type="ENUM">
-        <template name="generator/src/main/resources/enum.vm"/>
-    </for>
-</config>
