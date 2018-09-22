@@ -115,6 +115,7 @@
         <module>gramma</module>
         <module>sound</module>
         <module>generator</module>
+        <module>measuredata</module>
     </modules>
 
     <profiles>

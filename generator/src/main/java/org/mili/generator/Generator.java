@@ -47,15 +47,15 @@ public class Generator {
 
     private Map<Types, Set<String>> templatesByType = new HashMap<>();
 
-    private static final File out = new File("/home/micha/dev/jcrapi/src/main/java/jcrapi/model");
-    private static final File testOut = new File("/home/micha/dev/jcrapi/src/test/java/jcrapi/model");
+    private static final File out = new File("/home/micha/dev/jcrapi2/src/main/java/jcrapi2/model");
+    private static final File testOut = new File("/home/micha/dev/jcrapi2/src/test/java/jcrapi2/model");
 
     public void start() throws IOException {
         FileUtils.deleteQuietly(testOut);
         FileUtils.forceMkdir(testOut);
         FileUtils.deleteQuietly(out);
         FileUtils.forceMkdir(out);
-        ModelType modelType = JAXB.unmarshal(new File("/home/micha/dev/clash-royal-data-model/cr-api.xml"), ModelType.class);
+        ModelType modelType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi2/src/main/resources/model.xml"), ModelType.class);
         ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/clash-royal-data-model/cr-api-config.xml"), ConfigType.class);
         for (ForType forType : configType.getFor()) {
             Types types = Types.valueOf(forType.getType());

@@ -26,7 +26,9 @@ import org.apache.commons.lang3.text.WordUtils;
 public class Utils {
 
     public static String getJavaType(String value) {
-        return JavaTypeUtils.translateDslToJavaTypeSpec(value);
+        String computedType = JavaTypeUtils.translateDslToJavaTypeSpec(value);
+        System.out.println("*** " + value + " - ");
+        return computedType;
     }
 
     public static String getJavaImplType(String value) {
@@ -59,7 +61,17 @@ public class Utils {
         if (value.contains("_")) {
             return StringUtils.uncapitalize(WordUtils.capitalizeFully(value, '_').replace("_", ""));
         }
+        if (value.startsWith("is")) {
+            return value.substring(2);
+        }
         return value;
+    }
+
+    public static String getFieldAccessorName(String value, String fieldName) {
+        if ("boolean".equals(value)) {
+            return "is";
+        }
+        return "get";
     }
 
 }
