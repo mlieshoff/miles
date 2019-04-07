@@ -17,6 +17,8 @@ package org.mili.generator;
  * limitations under the License.
  */
 
+import static java.util.Collections.emptyList;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.Template;
@@ -27,16 +29,19 @@ import org.mili.generator.config.ForType;
 import org.mili.generator.config.TemplateType;
 import org.mili.generator.model.ClassType;
 import org.mili.generator.model.EnumType;
+import org.mili.generator.model.MemberType;
 import org.mili.generator.model.ModelType;
 
-import javax.xml.bind.JAXB;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.bind.JAXB;
 
 /**
  * @author Michael Lieshoff
@@ -47,16 +52,29 @@ public class Generator {
 
     private Map<Types, Set<String>> templatesByType = new HashMap<>();
 
-    private static final File out = new File("/home/micha/dev/jcrapi2/src/main/java/jcrapi2/model");
-    private static final File testOut = new File("/home/micha/dev/jcrapi2/src/test/java/jcrapi2/model");
+//    private static final File out = new File("/home/micha/dev/jcrapi2/src/main/java/jcrapi2/model");
+//    private static final File testOut = new File("/home/micha/dev/jcrapi2/src/test/java/jcrapi2/model");
+
+//    private static final File out = new File("/home/micha/dev/jcrapi/src/main/java/jcrapi/model");
+//    private static final File testOut = new File("/home/micha/dev/jcrapi/src/test/java/jcrapi/model");
+
+    private static final File out = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/src/com/bytediscover/ta/web/illusion/v2/fastsearch/model");
+    private static final File testOut = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/test/com/bytediscover/ta/web/illusion/v2/fastsearch/model");
+
+    private ModelType modelType;
+
+    private Map<ClassType, List<ClassType>> inheritations = new HashMap<>();
+    private Map<String, ClassType> classes = new HashMap<>();
 
     public void start() throws IOException {
         FileUtils.deleteQuietly(testOut);
         FileUtils.forceMkdir(testOut);
         FileUtils.deleteQuietly(out);
         FileUtils.forceMkdir(out);
-        ModelType modelType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi2/src/main/resources/model.xml"), ModelType.class);
-        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/clash-royal-data-model/cr-api-config.xml"), ConfigType.class);
+//        ModelType modelType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi/src/main/resources/model.xml"), ModelType.class);
+//        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi/src/main/resources/config.xml"), ConfigType.class);
+        modelType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/fast-search-model.xml"), ModelType.class);
+        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/fast-search-config.xml"), ConfigType.class);
         for (ForType forType : configType.getFor()) {
             Types types = Types.valueOf(forType.getType());
             Set<String> set = templatesByType.get(types);
@@ -78,10 +96,28 @@ public class Generator {
 
     private void processClasses(ModelType modelType) throws IOException {
         for (ClassType classType : modelType.getClazz()) {
+            classes.put(classType.getName(), classType);
+        }
+        for (ClassType classType : modelType.getClazz()) {
+            setInheritations(classType);
+        }
+        for (ClassType classType : modelType.getClazz()) {
             processClass(classType);
         }
         for (EnumType enumType : modelType.getEnum()) {
             processEnum(enumType);
+        }
+    }
+
+    private void setInheritations(ClassType classTypeToCheck) {
+        if (classTypeToCheck.getExtends() != null) {
+            ClassType superClassType = classes.get(classTypeToCheck.getExtends());
+            List<ClassType> classTypes = inheritations.get(superClassType);
+            if (classTypes == null) {
+                classTypes = new ArrayList<>();
+                inheritations.put(superClassType, classTypes);
+            }
+            classTypes.add(classTypeToCheck);
         }
     }
 
@@ -96,12 +132,15 @@ public class Generator {
             if (templateName.contains("test")) {
                 velocityContext.put("testClassname", classType.getName() + "Test");
             }
+            velocityContext.put("class", classType);
             velocityContext.put("classname", classType.getName());
             velocityContext.put("extends", classType.getExtends());
             velocityContext.put("fieldlist", classType.getMember());
             velocityContext.put("constlist", classType.getConst());
             velocityContext.put("StringUtils", StringUtils.class);
             velocityContext.put("Utils", Utils.class);
+            velocityContext.put("modelType", modelType);
+            velocityContext.put("generator", this);
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
             if (templateName.contains("test")) {
@@ -124,11 +163,14 @@ public class Generator {
             if (templateName.contains("test")) {
                 velocityContext.put("testClassname", enumType.getName() + "Test");
             }
+            velocityContext.put("class", enumType);
             velocityContext.put("classname", enumType.getName());
             velocityContext.put("constlist", enumType.getConst());
             velocityContext.put("implements", enumType.getImplements());
             velocityContext.put("StringUtils", StringUtils.class);
             velocityContext.put("Utils", Utils.class);
+            velocityContext.put("modelType", modelType);
+            velocityContext.put("generator", this);
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
             if (templateName.contains("test")) {
@@ -142,6 +184,24 @@ public class Generator {
 
     public static void main(String[] args) throws IOException {
         new Generator().start();
+    }
+
+    public List<ClassType> findInherits(MemberType memberType) {
+        if (memberType.getType().startsWith("list")) {
+            String superType = memberType.getType().replace("list(", "").replace(")", "");
+            ClassType superClassType = classes.get(superType);
+            List<ClassType> list = inheritations.get(superClassType);
+            if (list == null) {
+                return emptyList();
+            }
+            return list;
+        }
+        return emptyList();
+    }
+
+    public ClassType getGenericType(MemberType memberType) {
+        String typeName = memberType.getType().replace("list(", "").replace(")", "");
+        return classes.get(typeName);
     }
 
 }

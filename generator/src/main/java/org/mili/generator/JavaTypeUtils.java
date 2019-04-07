@@ -127,4 +127,36 @@ public class JavaTypeUtils {
         return exampleValue;
     }
 
+    public static boolean isWrapper(Class<?> type) {
+        return Boolean.class.isAssignableFrom(type)
+            || String.class.isAssignableFrom(type)
+            || Byte.class.isAssignableFrom(type)
+            || Short.class.isAssignableFrom(type)
+            || Float.class.isAssignableFrom(type)
+            || Integer.class.isAssignableFrom(type)
+            || Double.class.isAssignableFrom(type)
+            || Long.class.isAssignableFrom(type);
+    }
+
+    public static String getPrimitiveName(Class<?> type) {
+        if (Boolean.class.isAssignableFrom(type)) {
+            return "boolean";
+        } else if (String.class.isAssignableFrom(type)) {
+            return "String";
+        } else if (Byte.class.isAssignableFrom(type)) {
+            return "byte";
+        } else if (Short.class.isAssignableFrom(type)) {
+            return "short";
+        } else if (Float.class.isAssignableFrom(type)) {
+            return "float";
+        } else if (Integer.class.isAssignableFrom(type)) {
+            return "int";
+        } else if (Double.class.isAssignableFrom(type)) {
+            return "double";
+        } else if (Long.class.isAssignableFrom(type)) {
+            return "long";
+        }
+        return type.getSimpleName();
+    }
+
 }

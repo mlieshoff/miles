@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="extends" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="implements" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="synthetic" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -55,6 +56,8 @@ public class ClassType {
     protected String _implements;
     @XmlAttribute(name = "deprecated")
     protected Boolean deprecated;
+    @XmlAttribute(name = "synthetic")
+    protected Boolean synthetic;
 
     /**
      * Gets the value of the const property.
@@ -236,6 +239,34 @@ public class ClassType {
      */
     public void setDeprecated(Boolean value) {
         this.deprecated = value;
+    }
+
+    /**
+     * Ruft den Wert der synthetic-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isSynthetic() {
+        if (synthetic == null) {
+            return false;
+        } else {
+            return synthetic;
+        }
+    }
+
+    /**
+     * Legt den Wert der synthetic-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setSynthetic(Boolean value) {
+        this.synthetic = value;
     }
 
 }

@@ -19,6 +19,8 @@ package org.mili.utils.sql.service;
 import org.mili.utils.Lambda;
 import org.mili.utils.sql.migration.Migrator;
 
+import java.io.File;
+
 public class MigrationService extends Service {
 
     public void migrate(final boolean dropAndCreate) throws ServiceException {
@@ -26,6 +28,26 @@ public class MigrationService extends Service {
             @Override
             public Void exec(Object... params) throws Exception {
                 new Migrator().migrate(dropAndCreate);
+                return null;
+            }
+        });
+    }
+
+    public void migrate(final boolean dropAndCreate, final Class<?> clazz) throws ServiceException {
+        doInService(new Lambda<Void>() {
+            @Override
+            public Void exec(Object... params) throws Exception {
+                new Migrator().migrate(dropAndCreate, clazz);
+                return null;
+            }
+        });
+    }
+
+    public void migrate(final boolean dropAndCreate, final File directory) throws ServiceException {
+        doInService(new Lambda<Void>() {
+            @Override
+            public Void exec(Object... params) throws Exception {
+                new Migrator().migrate(dropAndCreate, directory);
                 return null;
             }
         });

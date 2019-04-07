@@ -5,26 +5,26 @@ public enum $classname {
 #set($useValue = false)
 
 #foreach( $const in $constlist )
-    #set($type = $const.type)
-    #if($const.value && !$useValue)#set($useValue = true)#end
-    #if($const.deprecated)
-    @Deprecated
-    #end
-    $const.name#if($const.value)(#if($const.prefix)$const.prefix#[[.getCode()]]# + #end#if($const.type == "String")"$const.value"#else $const.value#end)#end#if($foreach.count < $constlist.size()),
-    #else;
-    #end
+  #set($type = $const.type)
+  #if($const.value && !$useValue)#set($useValue = true)#end
+  #if($const.deprecated)
+  @Deprecated
+  #end
+  $const.name#if($const.value)(#if($const.prefix)$const.prefix#[[.getCode()]]# + #end#if($const.type == "String")"$const.value"#else $const.value#end)#end#if($foreach.count < $constlist.size()),
+  #else;
+  #end
 #end
 
 #if($useValue)
-    private final $type code;
+  private final $type code;
 
-    private $classname($type code) {
-        this.code = code;
-    }
+  private $classname($type code) {
+    this.code = code;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public String getCode() {
+    return code;
+  }
 #end
 
 }

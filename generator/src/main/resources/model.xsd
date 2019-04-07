@@ -5,13 +5,12 @@
         xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="model" type="modelType"/>
     <xs:complexType name="memberType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute type="xs:string" name="name"/>
-                <xs:attribute type="xs:string" name="type"/>
-                <xs:attribute type="xs:boolean" name="deprecated" default="false"/>
-            </xs:extension>
-        </xs:simpleContent>
+        <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="type"/>
+        <xs:attribute type="xs:string" name="alias" use="optional"/>
+        <xs:attribute type="xs:boolean" name="deprecated" default="false"/>
+        <xs:attribute type="xs:boolean" name="synthetic" default="false"/>
+        <xs:attribute type="xs:string" name="serializer" use="optional"/>
     </xs:complexType>
     <xs:complexType name="modelType">
         <xs:sequence>
@@ -29,6 +28,7 @@
         <xs:attribute type="xs:string" name="extends" use="optional"/>
         <xs:attribute type="xs:string" name="implements" use="optional"/>
         <xs:attribute type="xs:boolean" name="deprecated" default="false"/>
+        <xs:attribute type="xs:boolean" name="synthetic" default="false"/>
     </xs:complexType>
     <xs:complexType name="parameterType">
         <xs:simpleContent>

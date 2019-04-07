@@ -27,10 +27,10 @@ import static org.junit.Assert.assertEquals;
 public class $testClassname {
 
 #foreach( $const in $constlist )
-    @Test
-    public void should$const.name#[[()]]# {
-        assertEquals(#if($const.prefix) $classname.$const.prefix#[[.getCode()]]# +#end #if($const.type == "String")"$const.value"#else$const.value#end, $classname.$const.name#[[.getCode()]]#);
-    }
+  @Test
+  public void should$const.name#[[()]]# {
+    assertEquals(#if($const.prefix) $classname.$const.prefix#[[.getCode()]]# +#end #if($const.type == "String")"$const.value"#else$const.value#end, $classname.$const.name#[[.getCode()]]#);
+  }
 
 #end
 }

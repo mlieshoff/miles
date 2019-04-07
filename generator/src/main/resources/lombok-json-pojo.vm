@@ -36,18 +36,18 @@ import lombok.ToString;
 public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} #end{
 #foreach( $const in $constlist )
 
-    #if($field.deprecated)
-    @Deprecated
-    #end
-    public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
+  #if($field.deprecated)
+  @Deprecated
+  #end
+  public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
 #end
 
 #foreach( $field in $fieldlist )
-    #if($field.deprecated)
-    @Deprecated
-    #end
-    @SerializedName("$field.name")
-    private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)};
+  #if($field.deprecated)
+  @Deprecated
+  #end
+  @SerializedName("${Utils.getNameOrAlias($field)}")
+  private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)};
 
 #end
 }

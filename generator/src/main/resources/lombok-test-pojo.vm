@@ -26,41 +26,41 @@ import static org.junit.Assert.assertEquals;
 @Generated("org.mili.generator")
 public class $testClassname {
 
-    private $classname unitUnderTest;
+  private $classname unitUnderTest;
 
-    @Before
-    public void setUp() {
-        unitUnderTest = new $classname();
-    }
+  @Before
+  public void setUp() {
+    unitUnderTest = new $classname();
+  }
 
 #foreach( $field in $fieldlist )
-    #set($fieldname = ${Utils.getJavaName($field.name)})
-    @Test
-    public void shouldGetSet${StringUtils.capitalize($fieldname)}() {
-        ${Utils.getJavaType($field.type)} expected = ${Utils.getExampleValue($field.type)};
-        unitUnderTest.set${StringUtils.capitalize($fieldname)}(expected);
-        assertEquals(expected, unitUnderTest.${Utils.getFieldAccessorName($field.type, $fieldname)}${StringUtils.capitalize($fieldname)}()${Utils.getExampleFloatingDeltaIfNeed($field.type)});
-    }
+  #set($fieldname = ${Utils.getJavaName($field.name)})
+  @Test
+  public void shouldGetSet${StringUtils.capitalize($fieldname)}() {
+    ${Utils.getJavaType($field.type)} expected = ${Utils.getExampleValue($field.type)};
+    unitUnderTest.set${StringUtils.capitalize($fieldname)}(expected);
+    assertEquals(expected, unitUnderTest.${Utils.getFieldAccessorName($field.type, $fieldname)}${StringUtils.capitalize($fieldname)}()${Utils.getExampleFloatingDeltaIfNeed($field.type)});
+  }
 
 #end
 #foreach( $const in $constlist )
-    @Test
-    public void shouldGet$const.name#[[()]]# {
-        assertEquals(#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end, unitUnderTest.$const.name);
-    }
+  @Test
+  public void shouldGet$const.name#[[()]]# {
+    assertEquals(#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end, unitUnderTest.$const.name);
+  }
     
 #end
 #if(!$extends.startsWith("map(") && !$extends.startsWith("list("))
-    @Test
-    public void shouldToString() {
-        #foreach($field in $fieldlist)
-        #set($fieldname = ${Utils.getJavaName($field.name)})
-        unitUnderTest.set${StringUtils.capitalize($fieldname)}(${Utils.getExampleValueGeneric($field.type)});
-        #end
-        String expected = "$classname(#foreach($field in $fieldlist)#set($fieldname = ${Utils.getJavaName($field.name)})$fieldname=${Utils.getExampleToStringValue($field.type)}#if($foreach.count < $fieldlist.size()), #end#end)";
-        String actual = unitUnderTest.toString();
-        assertEquals(expected, actual);
-    }
+  @Test
+  public void shouldToString() {
+    #foreach($field in $fieldlist)
+    #set($fieldname = ${Utils.getJavaName($field.name)})
+    unitUnderTest.set${StringUtils.capitalize($fieldname)}(${Utils.getExampleValueGeneric($field.type)});
+    #end
+    String expected = "$classname(#foreach($field in $fieldlist)#set($fieldname = ${Utils.getJavaName($field.name)})$fieldname=${Utils.getExampleToStringValue($field.type)}#if($foreach.count < $fieldlist.size()), #end#end)";
+    String actual = unitUnderTest.toString();
+    assertEquals(expected, actual);
+  }
 #end
 
 }

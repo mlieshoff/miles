@@ -17,8 +17,21 @@
 
 package org.mili.generator;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.mili.generator.model.ClassType;
+import org.mili.generator.model.MemberType;
+import org.mili.generator.model.ModelType;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 
 /**
  * @author Michael Lieshoff
@@ -26,9 +39,7 @@ import org.apache.commons.lang3.text.WordUtils;
 public class Utils {
 
     public static String getJavaType(String value) {
-        String computedType = JavaTypeUtils.translateDslToJavaTypeSpec(value);
-        System.out.println("*** " + value + " - ");
-        return computedType;
+        return JavaTypeUtils.translateDslToJavaTypeSpec(value);
     }
 
     public static String getJavaImplType(String value) {
@@ -72,6 +83,66 @@ public class Utils {
             return "is";
         }
         return "get";
+    }
+
+    public static String getNameOrAlias(MemberType memberType) {
+        if (isNotBlank(memberType.getAlias())) {
+            return memberType.getAlias();
+        }
+        return memberType.getName();
+    }
+
+    public static String getNameOrAlias(ClassType classType) {
+        if (isNotBlank(classType.getAlias())) {
+            return classType.getAlias();
+        }
+        return classType.getName();
+    }
+
+    public static String generateXmlElementDefinition(ModelType modelType, MemberType memberType) {
+        if (memberType.getType().startsWith("list")) {
+            StringBuilder s = new StringBuilder();
+            String superType = memberType.getType().replace("list(", "").replace(")", "");
+            Set<ClassType> classTypes = new HashSet();
+            for (ClassType classType : modelType.getClazz()) {
+                if (classType.getExtends() != null && classType.getExtends().equals(superType)) {
+                    classTypes.add(classType);
+                }
+            }
+            if (classTypes.size() > 0) {
+                s.append(String.format("@XmlElementWrapper(name = \"%s\")\n", getNameOrAlias(memberType)));
+                s.append("    @XmlElements({\n");
+                for (Iterator<ClassType> iterator = classTypes.iterator(); iterator.hasNext(); ) {
+                    ClassType classType = iterator.next();
+                    s.append(String.format("        @XmlElement(name = \"%s\", type = %s.class)", classType.getName(), classType.getName()));
+                    if (iterator.hasNext()) {
+                        s.append(",\n");
+                    }
+                }
+                s.append("\n    })");
+                return s.toString();
+            } else {
+                return String.format("@XmlElement(name = \"%s\")", getNameOrAlias(memberType));
+            }
+        } else {
+            return String.format("@XmlElement(name = \"%s\")", getNameOrAlias(memberType));
+        }
+    }
+
+    public static boolean isCollection(String value) {
+        if (value.startsWith("list(")) {
+            return true;
+        } else if (value.startsWith("set(")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isMap(String value) {
+        if (value.startsWith("map(")) {
+            return true;
+        }
+        return false;
     }
 
 }

@@ -17,12 +17,25 @@
 package $package;
 
 import javax.annotation.Generated;
-import com.google.gson.annotations.SerializedName;
 
-#if($field.deprecated)
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+#if($class.deprecated)
 @Deprecated
 #end
 @Generated("org.mili.generator")
+#if(not $class.synthetic)
+@XmlRootElement(name = "${StringUtils.capitalize($classname)}")
+#end
+@XmlAccessorType(XmlAccessType.FIELD)
 public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} #end{
 #foreach( $const in $constlist )
 
@@ -33,10 +46,29 @@ public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} 
 #end
 
 #foreach( $field in $fieldlist )
+    #set($genericType = ${generator.getGenericType($field)})
     #if($field.deprecated)
     @Deprecated
     #end
-    @SerializedName("${Utils.getNameOrAlias($field)}")
+    #if(${Utils.isCollection($field.type)})
+        #if($generator.findInherits($field).size() > 0)
+            #if(not $field.synthetic)
+    @XmlElementWrapper(name = "${Utils.getNameOrAlias($field)}")
+            #end
+    @XmlElements({
+            #foreach($member in $generator.findInherits($field))
+        @XmlElement(name = "${Utils.getNameOrAlias($member)}", type = ${StringUtils.capitalize($member.name)}.class),
+            #end
+        })
+        #else
+    @XmlElement(name = "${Utils.getNameOrAlias($genericType)}")
+        #end
+    #else
+    @XmlElement(name = "${Utils.getNameOrAlias($field)}")
+    #end
+    #if(${StringUtils.isNotBlank($field.serializer)})
+    @XmlJavaTypeAdapter($field.serializer)
+    #end
     private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)};
 
 #end
@@ -60,7 +92,7 @@ public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} 
     #if(!$extends.startsWith("map(") && !$extends.startsWith("list("))
     public String toString() {
         java.lang.StringBuilder s = new java.lang.StringBuilder();
-        s.append("$classname{");
+        s.append("$classname(");
         #foreach($field in $fieldlist)
         #set($fieldname = ${Utils.getJavaName($field.name)})
         s.append("$fieldname=");
@@ -69,7 +101,7 @@ public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} 
         s.append(", ");
         #end
         #end
-        s.append("}");
+        s.append(")");
         return s.toString();
     }
     #end
