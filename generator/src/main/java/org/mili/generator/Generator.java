@@ -52,29 +52,23 @@ public class Generator {
 
     private Map<Types, Set<String>> templatesByType = new HashMap<>();
 
-//    private static final File out = new File("/home/micha/dev/jcrapi2/src/main/java/jcrapi2/model");
-//    private static final File testOut = new File("/home/micha/dev/jcrapi2/src/test/java/jcrapi2/model");
-
-//    private static final File out = new File("/home/micha/dev/jcrapi/src/main/java/jcrapi/model");
-//    private static final File testOut = new File("/home/micha/dev/jcrapi/src/test/java/jcrapi/model");
-
-    private static final File out = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/src/com/bytediscover/ta/web/illusion/v2/standard/model");
-    private static final File testOut = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/test/com/bytediscover/ta/web/illusion/v2/standard/model");
+    private File outDir;
+    private File testOutDir;
 
     private ModelType modelType;
 
     private Map<ClassType, List<ClassType>> inheritations = new HashMap<>();
     private Map<String, ClassType> classes = new HashMap<>();
 
-    public void start() throws IOException {
-        FileUtils.deleteQuietly(testOut);
-        FileUtils.forceMkdir(testOut);
-        FileUtils.deleteQuietly(out);
-        FileUtils.forceMkdir(out);
-//        ModelType modelType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi/src/main/resources/model.xml"), ModelType.class);
-//        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi/src/main/resources/config.xml"), ConfigType.class);
-        modelType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/standard-model.xml"), ModelType.class);
-        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/standard-config.xml"), ConfigType.class);
+    public void start(String outDirName, String testOutDirName, String configFilename, String modelFilename) throws IOException {
+        outDir = new File(outDirName);
+        testOutDir = new File(testOutDirName);
+        FileUtils.deleteQuietly(testOutDir);
+        FileUtils.forceMkdir(testOutDir);
+        FileUtils.deleteQuietly(outDir);
+        FileUtils.forceMkdir(outDir);
+        modelType = JAXB.unmarshal(new File(modelFilename), ModelType.class);
+        ConfigType configType = JAXB.unmarshal(new File(configFilename), ConfigType.class);
         for (ForType forType : configType.getFor()) {
             Types types = Types.valueOf(forType.getType());
             Set<String> set = templatesByType.get(types);
@@ -144,9 +138,9 @@ public class Generator {
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
             if (templateName.contains("test")) {
-                FileUtils.write(new File(testOut, classType.getName() + "Test.java"), stringWriter.toString(), "UTF-8");
+                FileUtils.write(new File(testOutDir, classType.getName() + "Test.java"), stringWriter.toString(), "UTF-8");
             } else {
-                FileUtils.write(new File(out, classType.getName() + ".java"), stringWriter.toString(), "UTF-8");
+                FileUtils.write(new File(outDir, classType.getName() + ".java"), stringWriter.toString(), "UTF-8");
             }
             System.out.println(classType.getName());
         }
@@ -174,16 +168,16 @@ public class Generator {
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
             if (templateName.contains("test")) {
-                FileUtils.write(new File(testOut, enumType.getName() + "Test.java"), stringWriter.toString(), "UTF-8");
+                FileUtils.write(new File(testOutDir, enumType.getName() + "Test.java"), stringWriter.toString(), "UTF-8");
             } else {
-                FileUtils.write(new File(out, enumType.getName() + ".java"), stringWriter.toString(), "UTF-8");
+                FileUtils.write(new File(outDir, enumType.getName() + ".java"), stringWriter.toString(), "UTF-8");
             }
             System.out.println(enumType.getName());
         }
     }
 
     public static void main(String[] args) throws IOException {
-        new Generator().start();
+        new Generator().start(args[0], args[1], args[2], args[3]);
     }
 
     public List<ClassType> findInherits(MemberType memberType) {
