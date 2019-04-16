@@ -10,6 +10,7 @@
         <xs:attribute type="xs:string" name="alias" use="optional"/>
         <xs:attribute type="xs:boolean" name="deprecated" default="false"/>
         <xs:attribute type="xs:boolean" name="synthetic" default="false"/>
+        <xs:attribute type="xs:boolean" name="attribute" default="false"/>
         <xs:attribute type="xs:string" name="serializer" use="optional"/>
     </xs:complexType>
     <xs:complexType name="modelType">

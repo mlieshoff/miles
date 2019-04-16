@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="alias" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *       &lt;attribute name="synthetic" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="attribute" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *       &lt;attribute name="serializer" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -43,6 +44,8 @@ public class MemberType {
     protected Boolean deprecated;
     @XmlAttribute(name = "synthetic")
     protected Boolean synthetic;
+    @XmlAttribute(name = "attribute")
+    protected Boolean attribute;
     @XmlAttribute(name = "serializer")
     protected String serializer;
 
@@ -172,6 +175,34 @@ public class MemberType {
      */
     public void setSynthetic(Boolean value) {
         this.synthetic = value;
+    }
+
+    /**
+     * Ruft den Wert der attribute-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isAttribute() {
+        if (attribute == null) {
+            return false;
+        } else {
+            return attribute;
+        }
+    }
+
+    /**
+     * Legt den Wert der attribute-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setAttribute(Boolean value) {
+        this.attribute = value;
     }
 
     /**

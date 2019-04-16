@@ -58,8 +58,8 @@ public class Generator {
 //    private static final File out = new File("/home/micha/dev/jcrapi/src/main/java/jcrapi/model");
 //    private static final File testOut = new File("/home/micha/dev/jcrapi/src/test/java/jcrapi/model");
 
-    private static final File out = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/src/com/bytediscover/ta/web/illusion/v2/fastsearch/model");
-    private static final File testOut = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/test/com/bytediscover/ta/web/illusion/v2/fastsearch/model");
+    private static final File out = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/src/com/bytediscover/ta/web/illusion/v2/standard/model");
+    private static final File testOut = new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/test/com/bytediscover/ta/web/illusion/v2/standard/model");
 
     private ModelType modelType;
 
@@ -73,8 +73,8 @@ public class Generator {
         FileUtils.forceMkdir(out);
 //        ModelType modelType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi/src/main/resources/model.xml"), ModelType.class);
 //        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/jcrapi/src/main/resources/config.xml"), ConfigType.class);
-        modelType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/fast-search-model.xml"), ModelType.class);
-        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/fast-search-config.xml"), ConfigType.class);
+        modelType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/standard-model.xml"), ModelType.class);
+        ConfigType configType = JAXB.unmarshal(new File("/home/micha/dev/bytediscover/git/bdta_maven/bytediscoverTAWeb/models/illusion/standard-config.xml"), ConfigType.class);
         for (ForType forType : configType.getFor()) {
             Types types = Types.valueOf(forType.getType());
             Set<String> set = templatesByType.get(types);

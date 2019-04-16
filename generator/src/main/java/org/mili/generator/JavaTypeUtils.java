@@ -121,6 +121,8 @@ public class JavaTypeUtils {
             exampleValue = exampleValue.replace("L", "");
         } else if (type.equals("Long")) {
             exampleValue = exampleValue.replace("Long.valueOf(", "").replace("L)", "");
+        } else if (type.equals("Double")) {
+            exampleValue = exampleValue.replace("Double.valueOf(", "").replace("L)", "");
         } else if (type.equals("float")) {
             exampleValue = exampleValue.replace("F", "");
         }

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 #if($class.deprecated)
@@ -33,7 +34,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 #end
 @Generated("org.mili.generator")
 #if(not $class.synthetic)
-@XmlRootElement(name = "${StringUtils.capitalize($classname)}")
+@XmlRootElement(name = "${Utils.getNameOrAlias($class)}")
 #end
 @XmlAccessorType(XmlAccessType.FIELD)
 public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} #end{
@@ -63,6 +64,10 @@ public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} 
         #else
     @XmlElement(name = "${Utils.getNameOrAlias($genericType)}")
         #end
+    #elseif($field.synthetic)
+    @XmlValue
+    #elseif($field.attribute)
+    @XmlAttribute(name = "${Utils.getNameOrAlias($field)}")
     #else
     @XmlElement(name = "${Utils.getNameOrAlias($field)}")
     #end
