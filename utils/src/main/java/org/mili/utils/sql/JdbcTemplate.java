@@ -18,35 +18,33 @@ package org.mili.utils.sql;
 
 import org.mili.utils.Log;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class JdbcTemplate {
 
-    private ConnectionPool connectionPool = new ConnectionPool();
-    private Map<String, PreparedStatement> cache = new ConcurrentHashMap<>();
-
     protected <T> List<T> query(RowTransformer<T> rowTransformer, String sql, Object... objects) throws SQLException {
+        ConnectionPool.ConnectionContext connectionContext = ConnectionPool.getInstance().get();
+        Connection connection = connectionContext.getConnection();
         sql = normalize(sql);
-        Log.info(this, "query", connectionPool.get() + " - query: " + sql);
-        PreparedStatement preparedStatement = cache.get(sql);
+        Log.info(this, "query", connectionContext + " - query: " + sql);
+        PreparedStatement preparedStatement = connectionContext.getStatement(sql);
         if (preparedStatement == null) {
-            preparedStatement = connectionPool.get().getConnection().prepareStatement(sql);
-            cache.put(sql, preparedStatement);
+            preparedStatement = connection.prepareStatement(sql);
+            connectionContext.putStatement(sql, preparedStatement);
         }
         fillWithObjects(preparedStatement, objects);
         List<T> list = new ArrayList<>();
         ResultSet result = preparedStatement.executeQuery();
         while(result.next()) {
-            Log.info(this, "query", (connectionPool.get() + " - call transformer"));
+            Log.info(this, "query", (connectionContext + " - call transformer"));
             list.add(rowTransformer.transform(result));
         }
-        Log.info(this, "query", (connectionPool.get() + " - size: " + list.size()));
+        Log.info(this, "query", (connectionContext + " - size: " + list.size()));
         return list;
     }
 
@@ -82,24 +80,28 @@ public class JdbcTemplate {
     }
 
     protected int update(String sql, Object... objects) throws SQLException {
+        ConnectionPool.ConnectionContext connectionContext = ConnectionPool.getInstance().get();
+        Connection connection = connectionContext.getConnection();
         sql = normalize(sql);
-        Log.info(this, "update", connectionPool.get() + " - update: " + sql);
-        PreparedStatement preparedStatement = cache.get(sql);
+        Log.info(this, "update", connectionContext + " - update: " + sql);
+        PreparedStatement preparedStatement = connectionContext.getStatement(sql);
         if (preparedStatement == null) {
-            preparedStatement = connectionPool.get().getConnection().prepareStatement(sql);
-            cache.put(sql, preparedStatement);
+            preparedStatement = connection.prepareStatement(sql);
+            connectionContext.putStatement(sql, preparedStatement);
         }
         fillWithObjects(preparedStatement, objects);
         return preparedStatement.executeUpdate();
     }
 
     protected boolean execute(String sql, Object... objects) throws SQLException {
+        ConnectionPool.ConnectionContext connectionContext = ConnectionPool.getInstance().get();
+        Connection connection = connectionContext.getConnection();
         sql = normalize(sql);
-        Log.info(this, "execute", connectionPool.get() + " - execute: " + sql);
-        PreparedStatement preparedStatement = cache.get(sql);
+        Log.info(this, "execute", connectionContext + " - execute: " + sql);
+        PreparedStatement preparedStatement = connectionContext.getStatement(sql);
         if (preparedStatement == null) {
-            preparedStatement = connectionPool.get().getConnection().prepareStatement(sql);
-            cache.put(sql, preparedStatement);
+            preparedStatement = connection.prepareStatement(sql);
+            connectionContext.putStatement(sql, preparedStatement);
         }
         if (objects != null) {
             for (int i = 0; i < objects.length; i ++) {
@@ -114,7 +116,7 @@ public class JdbcTemplate {
     }
 
     protected long getTransactionCreationTime() throws SQLException {
-        return connectionPool.get().getCreationTime();
+        return ConnectionPool.getInstance().get().getCreationTime();
     }
 
 }

@@ -16,57 +16,70 @@
  */
 package org.mili.utils;
 
-import org.apache.commons.lang3.ObjectUtils;
+import static org.apache.commons.lang3.ObjectUtils.identityToString;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Michael Lieshoff, 07.07.17
  */
 public class Log {
 
-    public static void trace(Class cls, String method, String message, Object... objects) {
-        Logger.getLogger(cls.getName()).finer(format(cls, method, message, objects));
+    public static void trace(Class clazz, String method, String message, Object... objects) {
+        getLogger(clazz).trace(format(clazz, method, message, objects));
    }
+
+    private static Logger getLogger(Class clazz) {
+        return LoggerFactory.getLogger(clazz);
+    }
 
     private static String format(Class cls, String method, String message, Object... objects) {
         return String.format("%s [%s]: %s", cls.getName(), method, String.format(message, objects));
     }
 
-    public static void debug(Class cls, String method, String message, Object... objects) {
-        Logger.getLogger(cls.getName()).fine(format(cls, method, message, objects));
+    public static void debug(Class clazz, String method, String message, Object... objects) {
+        getLogger(clazz).debug(format(clazz, method, message, objects));
    }
 
     public static void debug(Object o, String method, String message, Object... objects) {
-        Logger.getLogger(o.getClass().getName()).fine(format(o, method, message, objects));
+        getLogger(o.getClass()).debug(format(o, method, message, objects));
     }
 
     private static String format(Object o, String method, String message, Object... objects) {
-        return String.format("%s [%s]: %s", ObjectUtils.identityToString(o), method, String.format(message, objects));
+        return String.format("%s [%s]: %s", identityToString(o), method, String.format(message, objects));
     }
 
-    public static void info(Class cls, String method, String message, Object... objects) {
-        Logger.getLogger(cls.getName()).info(format(cls, method, message, objects));
+    public static void info(Class clazz, String method, String message, Object... objects) {
+        getLogger(clazz).info(format(clazz, method, message, objects));
     }
 
     public static void info(Object o, String method, String message, Object... objects) {
-        Logger.getLogger(o.getClass().getName()).info(format(o, method, message, objects));
+        getLogger(o.getClass()).info(format(o, method, message, objects));
     }
 
-    public static void warn(Class cls, String method, String message, Object... objects) {
-        Logger.getLogger(cls.getName()).warning(format(cls, method, message, objects));
+    public static void warn(Class clazz, String method, String message, Object... objects) {
+        getLogger(clazz).warn(format(clazz, method, message, objects));
     }
 
     public static void warn(Object o, String method, String message, Object... objects) {
-        Logger.getLogger(o.getClass().getName()).warning(format(o, method, message, objects));
+        getLogger(o.getClass()).warn(format(o, method, message, objects));
     }
 
-    public static void error(Class cls, String method, String message, Object... objects) {
-        Logger.getLogger(cls.getName()).severe(format(cls, method, message, objects));
+    public static void error(Class clazz, String method, String message, Object... objects) {
+        getLogger(clazz).error(format(clazz, method, message, objects));
     }
 
     public static void error(Object o, String method, String message, Object... objects) {
-        Logger.getLogger(o.getClass().getName()).severe(format(o, method, message, objects));
+        getLogger(o.getClass()).error(format(o, method, message, objects));
+    }
+
+    public static void fatal(Class clazz, String method, String message, Object... objects) {
+        getLogger(clazz).error(format(clazz, method, message, objects));
+    }
+
+    public static void fatal(Object o, String method, String message, Object... objects) {
+        getLogger(o.getClass()).error(format(o, method, message, objects));
     }
 
 }

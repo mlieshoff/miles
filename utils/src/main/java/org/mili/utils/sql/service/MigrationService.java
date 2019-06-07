@@ -18,36 +18,55 @@ package org.mili.utils.sql.service;
 
 import org.mili.utils.Lambda;
 import org.mili.utils.sql.migration.Migrator;
+import org.mili.utils.sql.transaction.TransactionalWrapper;
 
 import java.io.File;
 
 public class MigrationService extends Service {
 
     public void migrate(final boolean dropAndCreate) throws ServiceException {
-        doInService(new Lambda<Void>() {
+        new TransactionalWrapper().doTransactional(new Lambda<Void>() {
             @Override
             public Void exec(Object... params) throws Exception {
-                new Migrator().migrate(dropAndCreate);
+                doInService(new Lambda<Void>() {
+                    @Override
+                    public Void exec(Object... params) throws Exception {
+                        new Migrator().migrate(dropAndCreate);
+                        return null;
+                    }
+                });
                 return null;
             }
         });
     }
 
     public void migrate(final boolean dropAndCreate, final Class<?> clazz) throws ServiceException {
-        doInService(new Lambda<Void>() {
+        new TransactionalWrapper().doTransactional(new Lambda<Void>() {
             @Override
             public Void exec(Object... params) throws Exception {
-                new Migrator().migrate(dropAndCreate, clazz);
+                doInService(new Lambda<Void>() {
+                    @Override
+                    public Void exec(Object... params) throws Exception {
+                        new Migrator().migrate(dropAndCreate, clazz);
+                        return null;
+                    }
+                });
                 return null;
             }
         });
     }
 
     public void migrate(final boolean dropAndCreate, final File directory) throws ServiceException {
-        doInService(new Lambda<Void>() {
+        new TransactionalWrapper().doTransactional(new Lambda<Void>() {
             @Override
             public Void exec(Object... params) throws Exception {
-                new Migrator().migrate(dropAndCreate, directory);
+                doInService(new Lambda<Void>() {
+                    @Override
+                    public Void exec(Object... params) throws Exception {
+                        new Migrator().migrate(dropAndCreate, directory);
+                        return null;
+                    }
+                });
                 return null;
             }
         });

@@ -57,7 +57,7 @@ public class $testClassname {
         #set($fieldname = ${Utils.getJavaName($field.name)})
         unitUnderTest.set${StringUtils.capitalize($fieldname)}(${Utils.getExampleValueGeneric($field.type)});
         #end
-        String expected = "$classname{#foreach($field in $fieldlist)#set($fieldname = ${Utils.getJavaName($field.name)})$fieldname=${Utils.getExampleToStringValue($field.type)}#if($foreach.count < $fieldlist.size()), #end#end}";
+        String expected = "$classname(#foreach($field in $fieldlist)#set($fieldname = ${Utils.getJavaName($field.name)})$fieldname=${Utils.getExampleToStringValue($field.type)}#if($foreach.count < $fieldlist.size()), #end#end)";
         String actual = unitUnderTest.toString();
         assertEquals(expected, actual);
     }

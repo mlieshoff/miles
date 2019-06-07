@@ -183,6 +183,9 @@ public class Generator {
     public List<ClassType> findInherits(MemberType memberType) {
         if (memberType.getType().startsWith("list")) {
             String superType = memberType.getType().replace("list(", "").replace(")", "");
+            if ("String".equals(superType)) {
+                return emptyList();
+            }
             ClassType superClassType = classes.get(superType);
             List<ClassType> list = inheritations.get(superClassType);
             if (list == null) {
