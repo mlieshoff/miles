@@ -17,7 +17,9 @@
 package org.mili.utils.sql.dao;
 
 import org.mili.utils.Lambda;
+import org.mili.utils.Log;
 import org.mili.utils.sql.RowTransformer;
+import org.mili.utils.sql.migration.CustomMigration;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,7 +30,7 @@ import java.util.List;
  */
 public class SchemaVersionDao extends Dao {
 
-    private boolean mustUpdate = false;
+    private boolean mustUpdate;
 
     public static final String TABLE = "schemaversion";
 
@@ -48,14 +50,13 @@ public class SchemaVersionDao extends Dao {
                 }
                 if (mustUpdate || dropAndCreate) {
                     update("drop table if exists schemaversion;");
-                    update("CREATE TABLE if not exists schemaversion("
-                            + "id int NOT NULL AUTO_INCREMENT, "
-                            + "version int NOT NULL, "
-                            + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+                    update("CREATE TABLE if not exists schemaversion(" + "id int NOT NULL AUTO_INCREMENT, "
+                            + "version int NOT NULL, " + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
                             + "PRIMARY KEY (id))");
                 }
                 return null;
-            }});
+            }
+        });
     }
 
     public void executeScript(final String script) throws DaoException {
@@ -64,12 +65,26 @@ public class SchemaVersionDao extends Dao {
             public Void exec(Object... params) throws SQLException {
                 String[] split = script.split("[;]");
                 for (String sql : split) {
+                    sql = sql.trim();
                     if (sql.length() > 2 && !sql.startsWith("--")) {
                         execute(sql);
+                    } else if (sql.startsWith("-- custom-migration: ")) {
+                        String classname = sql.substring("-- custom-migration: ".length());
+                        Log.info(this, "executeScript", "found custom migration: %s", classname);
+                        try {
+                            Class<CustomMigration> clazz = (Class<CustomMigration>) Class.forName(classname);
+                            CustomMigration customMigration = clazz.newInstance();
+                            customMigration.migrate();
+                        } catch (Exception e) {
+                            Log.error(this, "executeScript", "error while executing custom migration: %s", classname,
+                                    e);
+                            throw new IllegalStateException(e);
+                        }
                     }
                 }
                 return null;
-            }});
+            }
+        });
     }
 
     public int readLastSchemaVersion() throws DaoException {
@@ -86,7 +101,8 @@ public class SchemaVersionDao extends Dao {
                     return list.get(0);
                 }
                 return 0;
-            }});
+            }
+        });
     }
 
     public void setLastSchemaVersion(final int lastSchemaVersion) throws DaoException {
@@ -95,7 +111,8 @@ public class SchemaVersionDao extends Dao {
             public Void exec(Object... params) throws SQLException {
                 update("insert into schemaversion (version) values(?);", lastSchemaVersion);
                 return null;
-            }});
+            }
+        });
     }
 
 }
