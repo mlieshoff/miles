@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *       &lt;attribute name="synthetic" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *       &lt;attribute name="attribute" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="defaultValue" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="serializer" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -46,6 +48,10 @@ public class MemberType {
     protected Boolean synthetic;
     @XmlAttribute(name = "attribute")
     protected Boolean attribute;
+    @XmlAttribute(name = "required")
+    protected Boolean required;
+    @XmlAttribute(name = "defaultValue")
+    protected String defaultValue;
     @XmlAttribute(name = "serializer")
     protected String serializer;
 
@@ -203,6 +209,58 @@ public class MemberType {
      */
     public void setAttribute(Boolean value) {
         this.attribute = value;
+    }
+
+    /**
+     * Ruft den Wert der required-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isRequired() {
+        if (required == null) {
+            return false;
+        } else {
+            return required;
+        }
+    }
+
+    /**
+     * Legt den Wert der required-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setRequired(Boolean value) {
+        this.required = value;
+    }
+
+    /**
+     * Ruft den Wert der defaultValue-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * Legt den Wert der defaultValue-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDefaultValue(String value) {
+        this.defaultValue = value;
     }
 
     /**
