@@ -8,6 +8,9 @@
         <xs:attribute type="xs:string" name="name"/>
         <xs:attribute type="xs:string" name="type"/>
         <xs:attribute type="xs:string" name="alias" use="optional"/>
+        <xs:attribute type="xs:string" name="typeInfo" use="optional"/>
+        <xs:attribute type="xs:string" name="info" use="optional"/>
+        <xs:attribute type="xs:string" name="wraps" use="optional"/>
         <xs:attribute type="xs:boolean" name="deprecated" default="false"/>
         <xs:attribute type="xs:boolean" name="synthetic" default="false"/>
         <xs:attribute type="xs:boolean" name="attribute" default="false"/>
@@ -17,9 +20,12 @@
     </xs:complexType>
     <xs:complexType name="modelType">
         <xs:sequence>
+            <xs:element type="interfaceType" name="interface" maxOccurs="unbounded" minOccurs="0"/>
             <xs:element type="classType" name="class" maxOccurs="unbounded" minOccurs="0"/>
             <xs:element type="enumType" name="enum" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute type="xs:boolean" name="useLicense"/>
+        <xs:attribute type="xs:boolean" name="useGenerated"/>
     </xs:complexType>
     <xs:complexType name="classType">
         <xs:sequence>
@@ -32,6 +38,7 @@
         <xs:attribute type="xs:string" name="implements" use="optional"/>
         <xs:attribute type="xs:boolean" name="deprecated" default="false"/>
         <xs:attribute type="xs:boolean" name="synthetic" default="false"/>
+        <xs:attribute type="xs:string" name="typeInfo" use="optional"/>
     </xs:complexType>
     <xs:complexType name="parameterType">
         <xs:simpleContent>
@@ -52,12 +59,16 @@
     </xs:complexType>
     <xs:complexType name="interfaceType">
         <xs:sequence>
+            <xs:element type="memberType" name="member" maxOccurs="unbounded" minOccurs="0"/>
             <xs:element type="methodType" name="method" maxOccurs="unbounded" minOccurs="0"/>
             <xs:element type="constType" name="const" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="alias" use="optional"/>
         <xs:attribute type="xs:string" name="extends" use="optional"/>
+        <xs:attribute type="xs:string" name="implements" use="optional"/>
         <xs:attribute type="xs:boolean" name="deprecated" default="false"/>
+        <xs:attribute type="xs:boolean" name="synthetic" default="false"/>
     </xs:complexType>
     <xs:complexType name="enumType">
         <xs:sequence>

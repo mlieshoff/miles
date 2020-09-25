@@ -161,4 +161,42 @@ public class JavaTypeUtils {
         return type.getSimpleName();
     }
 
+    public static String getPrimitiveName(String type) {
+        if ("Boolean".equals(type)) {
+            return "boolean";
+        } else if ("Byte".equals(type)) {
+            return "byte";
+        } else if ("Short".equals(type)) {
+            return "short";
+        } else if ("Float".equals(type)) {
+            return "float";
+        } else if ("Integer".equals(type)) {
+            return "int";
+        } else if ("Double".equals(type)) {
+            return "double";
+        } else if ("Long".equals(type)) {
+            return "long";
+        }
+        return type;
+    }
+
+    public static String getWrapperName(String type) {
+        if ("boolean".equals(type)) {
+            return "Boolean";
+        } else if ("byte".equals(type)) {
+            return "Byte";
+        } else if ("short".equals(type)) {
+            return "Short";
+        } else if ("float".equals(type)) {
+            return "Float";
+        } else if ("int".equals(type)) {
+            return "Integer";
+        } else if ("double".equals(type)) {
+            return "Double";
+        } else if ("long".equals(type)) {
+            return "Long";
+        }
+        return type;
+    }
+
 }

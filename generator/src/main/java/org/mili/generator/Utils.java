@@ -18,11 +18,14 @@
 package org.mili.generator;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.mili.generator.JavaTypeUtils.getPrimitiveName;
+import static org.mili.generator.JavaTypeUtils.getWrapperName;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.mili.generator.model.ClassType;
+import org.mili.generator.model.InterfaceType;
 import org.mili.generator.model.MemberType;
 import org.mili.generator.model.ModelType;
 
@@ -99,6 +102,13 @@ public class Utils {
         return classType.getName();
     }
 
+    public static String getNameOrAlias(InterfaceType interfaceType) {
+        if (isNotBlank(interfaceType.getAlias())) {
+            return interfaceType.getAlias();
+        }
+        return interfaceType.getName();
+    }
+
     public static String generateXmlElementDefinition(ModelType modelType, MemberType memberType) {
         if (memberType.getType().startsWith("list")) {
             StringBuilder s = new StringBuilder();
@@ -143,6 +153,18 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    public static boolean isBoolean(MemberType memberType) {
+        return memberType.getType().equals("boolean");
+    }
+
+    public static String getJavaPrimitiveName(String type) {
+        return getPrimitiveName(type);
+    }
+
+    public static String getJavaWrapperName(String type) {
+        return getWrapperName(type);
     }
 
 }

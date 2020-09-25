@@ -19,6 +19,9 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="alias" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="typeInfo" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="info" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="wraps" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *       &lt;attribute name="synthetic" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *       &lt;attribute name="attribute" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
@@ -42,6 +45,12 @@ public class MemberType {
     protected String type;
     @XmlAttribute(name = "alias")
     protected String alias;
+    @XmlAttribute(name = "typeInfo")
+    protected String typeInfo;
+    @XmlAttribute(name = "info")
+    protected String info;
+    @XmlAttribute(name = "wraps")
+    protected String wraps;
     @XmlAttribute(name = "deprecated")
     protected Boolean deprecated;
     @XmlAttribute(name = "synthetic")
@@ -125,6 +134,78 @@ public class MemberType {
      */
     public void setAlias(String value) {
         this.alias = value;
+    }
+
+    /**
+     * Ruft den Wert der typeInfo-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTypeInfo() {
+        return typeInfo;
+    }
+
+    /**
+     * Legt den Wert der typeInfo-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTypeInfo(String value) {
+        this.typeInfo = value;
+    }
+
+    /**
+     * Ruft den Wert der info-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getInfo() {
+        return info;
+    }
+
+    /**
+     * Legt den Wert der info-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setInfo(String value) {
+        this.info = value;
+    }
+
+    /**
+     * Ruft den Wert der wraps-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getWraps() {
+        return wraps;
+    }
+
+    /**
+     * Legt den Wert der wraps-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setWraps(String value) {
+        this.wraps = value;
     }
 
     /**

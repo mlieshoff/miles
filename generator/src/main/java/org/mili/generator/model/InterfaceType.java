@@ -20,12 +20,16 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="member" type="{}memberType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="method" type="{}methodType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="const" type="{}constType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="alias" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="extends" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="implements" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="synthetic" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -35,20 +39,57 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "interfaceType", propOrder = {
+    "member",
     "method",
     "_const"
 })
 public class InterfaceType {
 
+    protected List<MemberType> member;
     protected List<MethodType> method;
     @XmlElement(name = "const")
     protected List<ConstType> _const;
     @XmlAttribute(name = "name")
     protected String name;
+    @XmlAttribute(name = "alias")
+    protected String alias;
     @XmlAttribute(name = "extends")
     protected String _extends;
+    @XmlAttribute(name = "implements")
+    protected String _implements;
     @XmlAttribute(name = "deprecated")
     protected Boolean deprecated;
+    @XmlAttribute(name = "synthetic")
+    protected Boolean synthetic;
+
+    /**
+     * Gets the value of the member property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the member property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getMember().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link MemberType }
+     * 
+     * 
+     */
+    public List<MemberType> getMember() {
+        if (member == null) {
+            member = new ArrayList<MemberType>();
+        }
+        return this.member;
+    }
 
     /**
      * Gets the value of the method property.
@@ -133,6 +174,30 @@ public class InterfaceType {
     }
 
     /**
+     * Ruft den Wert der alias-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAlias() {
+        return alias;
+    }
+
+    /**
+     * Legt den Wert der alias-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAlias(String value) {
+        this.alias = value;
+    }
+
+    /**
      * Ruft den Wert der extends-Eigenschaft ab.
      * 
      * @return
@@ -154,6 +219,30 @@ public class InterfaceType {
      */
     public void setExtends(String value) {
         this._extends = value;
+    }
+
+    /**
+     * Ruft den Wert der implements-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getImplements() {
+        return _implements;
+    }
+
+    /**
+     * Legt den Wert der implements-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setImplements(String value) {
+        this._implements = value;
     }
 
     /**
@@ -182,6 +271,34 @@ public class InterfaceType {
      */
     public void setDeprecated(Boolean value) {
         this.deprecated = value;
+    }
+
+    /**
+     * Ruft den Wert der synthetic-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isSynthetic() {
+        if (synthetic == null) {
+            return false;
+        } else {
+            return synthetic;
+        }
+    }
+
+    /**
+     * Legt den Wert der synthetic-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setSynthetic(Boolean value) {
+        this.synthetic = value;
     }
 
 }

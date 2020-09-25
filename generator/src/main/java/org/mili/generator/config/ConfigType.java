@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="for" type="{}forType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="package" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="basePackage" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -40,6 +41,8 @@ public class ConfigType {
     protected List<ForType> _for;
     @XmlAttribute(name = "package")
     protected String _package;
+    @XmlAttribute(name = "basePackage")
+    protected String basePackage;
 
     /**
      * Gets the value of the for property.
@@ -92,6 +95,30 @@ public class ConfigType {
      */
     public void setPackage(String value) {
         this._package = value;
+    }
+
+    /**
+     * Ruft den Wert der basePackage-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBasePackage() {
+        return basePackage;
+    }
+
+    /**
+     * Legt den Wert der basePackage-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBasePackage(String value) {
+        this.basePackage = value;
     }
 
 }

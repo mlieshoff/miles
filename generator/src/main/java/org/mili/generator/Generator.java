@@ -18,6 +18,8 @@ package org.mili.generator;
  */
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +31,7 @@ import org.mili.generator.config.ForType;
 import org.mili.generator.config.TemplateType;
 import org.mili.generator.model.ClassType;
 import org.mili.generator.model.EnumType;
+import org.mili.generator.model.InterfaceType;
 import org.mili.generator.model.MemberType;
 import org.mili.generator.model.ModelType;
 
@@ -36,11 +39,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
 
 /**
@@ -48,9 +56,10 @@ import javax.xml.bind.JAXB;
  */
 public class Generator {
 
-    private String mainPackage;
+    private String basePackage;
+    private String generatedPackage;
 
-    private Map<Types, Set<String>> templatesByType = new HashMap<>();
+    private Map<Types, Set<TemplateType>> templatesByType = new HashMap<>();
 
     private File outDir;
     private File testOutDir;
@@ -58,7 +67,13 @@ public class Generator {
     private ModelType modelType;
 
     private Map<ClassType, List<ClassType>> inheritations = new HashMap<>();
-    private Map<String, ClassType> classes = new HashMap<>();
+    private Map<InterfaceType, List<InterfaceType>> interfaceInheritations = new HashMap<>();
+    private Map<InterfaceType, List<InterfaceType>> superInterfaceInheritations = new HashMap<>();
+    private Map<String, ClassType> classes = new TreeMap<>();
+    private Map<String, InterfaceType> interfaces = new TreeMap<>();
+    private Map<String, EnumType> enums = new TreeMap<>();
+
+    private Map<String, Object> baseContext = new HashMap<>();
 
     public void start(String outDirName, String testOutDirName, String configFilename, String modelFilename) throws IOException {
         outDir = new File(outDirName);
@@ -71,21 +86,106 @@ public class Generator {
         ConfigType configType = JAXB.unmarshal(new File(configFilename), ConfigType.class);
         for (ForType forType : configType.getFor()) {
             Types types = Types.valueOf(forType.getType());
-            Set<String> set = templatesByType.get(types);
+            Set<TemplateType> set = templatesByType.get(types);
             if (set == null) {
                 set = new HashSet<>();
                 templatesByType.put(types, set);
             }
             for (TemplateType templateType : forType.getTemplate()) {
-                set.add(templateType.getName());
+                baseContext.put("templatePackage" + templateType.getId(), templateType.getPackage());
+                set.add(templateType);
             }
         }
         processModelType(configType, modelType);
+
+        System.out.println("*** report");
+        for (Entry<String, ClassType> entry : classes.entrySet()) {
+            System.out.println();
+            ClassType classType = entry.getValue();
+            System.out.print(classType.getName());
+            if (isNotBlank(classType.getExtends())) {
+                System.out.print(" -> " + classType.getExtends());
+            }
+            if (isNotBlank(classType.getImplements())) {
+                System.out.print(" -> " + classType.getImplements());
+            }
+            System.out.println();
+            System.out.printf("%-35s %-8s %-30s %-60s\n",
+                "Field",
+                "Req/Opt",
+                "Default",
+                "Source"
+            );
+            for (MemberType memberType : getFieldList(classType)) {
+                System.out.printf("%-35s %-8s %-30s %-60s\n",
+                    memberType.getName(),
+                    memberType.isRequired() ? "REQUIRED" : "OPTIONAL",
+                    memberType.getDefaultValue(),
+                    memberType.getInfo() == null ? "" : memberType.getInfo()
+                    );
+            }
+        }
+        /*
+        for (Entry<String, InterfaceType> entry : interfaces.entrySet()) {
+            System.out.println();
+            InterfaceType interfaceType = entry.getValue();
+            System.out.print(Utils.getNameOrAlias(interfaceType));
+            if (isNotBlank(interfaceType.getExtends())) {
+                System.out.print(" -> " + interfaceType.getExtends());
+            }
+            System.out.println();
+            System.out.printf("%-35s %-8s %-30s %-60s\n",
+                "Field",
+                "Req/Opt",
+                "Default",
+                "Source"
+            );
+            for (MemberType memberType : interfaceType.getMember()) {
+                System.out.printf("%-35s %-8s %-30s %-60s\n",
+                    memberType.getName(),
+                    memberType.isRequired() ? "REQUIRED" : "OPTIONAL",
+                    memberType.getDefaultValue(),
+                    memberType.getInfo()
+                    );
+            }
+        }
+        */
+
     }
 
     private void processModelType(ConfigType configType, ModelType modelType) throws IOException {
-        mainPackage = configType.getPackage();
+        generatedPackage = configType.getPackage();
+        basePackage = configType.getBasePackage();
+        baseContext.put("package", generatedPackage);
+        baseContext.put("basepackage", basePackage);
+        baseContext.put("StringUtils", StringUtils.class);
+        baseContext.put("Utils", Utils.class);
+        baseContext.put("modelType", modelType);
+        baseContext.put("generator", this);
+        processEnums(modelType);
+        processInterfaces(modelType);
         processClasses(modelType);
+    }
+
+    private void processEnums(ModelType modelType) throws IOException {
+        for (EnumType enumType : modelType.getEnum()) {
+            enums.put(enumType.getName(), enumType);
+        }
+        for (EnumType enumType : modelType.getEnum()) {
+            processEnum(enumType);
+        }
+    }
+
+    private void processInterfaces(ModelType modelType) throws IOException {
+        for (InterfaceType interfaceType : modelType.getInterface()) {
+            interfaces.put(interfaceType.getName(), interfaceType);
+        }
+        for (InterfaceType interfaceType : modelType.getInterface()) {
+            setInheritations(interfaceType);
+        }
+        for (InterfaceType interfaceType : modelType.getInterface()) {
+            processInterface(interfaceType);
+        }
     }
 
     private void processClasses(ModelType modelType) throws IOException {
@@ -98,8 +198,24 @@ public class Generator {
         for (ClassType classType : modelType.getClazz()) {
             processClass(classType);
         }
-        for (EnumType enumType : modelType.getEnum()) {
-            processEnum(enumType);
+    }
+
+    private void setInheritations(InterfaceType interfaceTypeToCheck) {
+        if (interfaceTypeToCheck.getExtends() != null) {
+            InterfaceType superInterfaceType = interfaces.get(interfaceTypeToCheck.getExtends());
+            List<InterfaceType> interfaceTypes = interfaceInheritations.get(superInterfaceType);
+            if (interfaceTypes == null) {
+                interfaceTypes = new ArrayList<>();
+                interfaceInheritations.put(superInterfaceType, interfaceTypes);
+            }
+            interfaceTypes.add(interfaceTypeToCheck);
+
+            interfaceTypes = superInterfaceInheritations.get(interfaceTypeToCheck);
+            if (interfaceTypes == null) {
+                interfaceTypes = new ArrayList<>();
+                superInterfaceInheritations.put(interfaceTypeToCheck, interfaceTypes);
+            }
+            interfaceTypes.add(superInterfaceType);
         }
     }
 
@@ -115,45 +231,136 @@ public class Generator {
         }
     }
 
-    private void processClass(ClassType classType) throws IOException {
-        Set<String> templateNames = templatesByType.get(Types.CLASS);
-        for (String templateName : templateNames) {
+    private void processInterface(InterfaceType interfaceType) throws IOException {
+        Set<TemplateType> templateTypes = templatesByType.get(Types.INTERFACE);
+        for (TemplateType templateType  : templateTypes) {
+            String templateName = templateType.getName();
             VelocityEngine velocityEngine = new VelocityEngine();
             velocityEngine.init();
             Template template = velocityEngine.getTemplate(templateName);
-            VelocityContext velocityContext = new VelocityContext();
-            velocityContext.put("package", mainPackage);
+            VelocityContext velocityContext = createVelocityContext();
+            if (templateName.contains("test")) {
+                velocityContext.put("testClassname", interfaceType.getName() + "Test");
+            }
+            velocityContext.put("class", interfaceType);
+            velocityContext.put("classname", interfaceType.getName());
+            velocityContext.put("extends", interfaceType.getExtends());
+            velocityContext.put("methodlist", interfaceType.getMethod());
+            velocityContext.put("fieldlist", interfaceType.getMember());
+            velocityContext.put("constlist", interfaceType.getConst());
+            velocityContext.put("usedenums", getUsedEnums(interfaceType.getMember()));
+            StringWriter stringWriter = new StringWriter();
+            template.merge(velocityContext, stringWriter);
+            writeFile(templateType, interfaceType.getName(), stringWriter);
+        }
+    }
+
+    private Collection<MemberType> getUsedEnums(List<MemberType> memberTypes) {
+        Collection<MemberType> usedEnums = new HashSet<>();
+        for (MemberType memberType : memberTypes) {
+            if (enums.containsKey(memberType.getType())) {
+                usedEnums.add(memberType);
+            }
+        }
+        return usedEnums.stream().sorted((o1, o2) -> StringUtils.compare(o2.getName(), o1.getName())).collect(toList());
+    }
+
+    private VelocityContext createVelocityContext() {
+        VelocityContext velocityContext = new VelocityContext();
+        for (Entry<String, Object> entry : baseContext.entrySet()){
+            velocityContext.put(entry.getKey(), entry.getValue());
+        }
+        return velocityContext;
+    }
+
+    private void writeFile(TemplateType templateType, String name, StringWriter stringWriter) throws IOException {
+        String filename = name + templateType.getSuffix();
+        File file;
+        if (templateType.isTest()) {
+            if (isNotBlank(templateType.getPackage())) {
+                File dir = new File(testOutDir, templateType.getPackage());
+                dir.mkdirs();
+                file = new File(dir, filename);
+            } else {
+                file = new File(testOutDir, filename);
+            }
+        } else {
+            if (isNotBlank(templateType.getPackage())) {
+                File dir = new File(outDir, templateType.getPackage());
+                dir.mkdirs();
+                file = new File(dir, filename);
+            } else {
+                file = new File(outDir, filename);
+            }
+        }
+        FileUtils.write(file, stringWriter.toString(), "UTF-8");
+        System.out.println(name);
+    }
+
+    private void processClass(ClassType classType) throws IOException {
+        Set<TemplateType> templateTypes = templatesByType.get(Types.CLASS);
+        for (TemplateType templateType  : templateTypes) {
+            String templateName = templateType.getName();
+            VelocityEngine velocityEngine = new VelocityEngine();
+            velocityEngine.init();
+            Template template = velocityEngine.getTemplate(templateName);
+            VelocityContext velocityContext = createVelocityContext();
             if (templateName.contains("test")) {
                 velocityContext.put("testClassname", classType.getName() + "Test");
             }
             velocityContext.put("class", classType);
             velocityContext.put("classname", classType.getName());
             velocityContext.put("extends", classType.getExtends());
-            velocityContext.put("fieldlist", classType.getMember());
+            velocityContext.put("implements", classType.getImplements());
+            velocityContext.put("fieldlist", getFieldList(classType));
             velocityContext.put("constlist", classType.getConst());
-            velocityContext.put("StringUtils", StringUtils.class);
-            velocityContext.put("Utils", Utils.class);
-            velocityContext.put("modelType", modelType);
-            velocityContext.put("generator", this);
+            velocityContext.put("usedenums", getUsedEnums(classType.getMember()));
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
-            if (templateName.contains("test")) {
-                FileUtils.write(new File(testOutDir, classType.getName() + "Test.java"), stringWriter.toString(), "UTF-8");
-            } else {
-                FileUtils.write(new File(outDir, classType.getName() + ".java"), stringWriter.toString(), "UTF-8");
-            }
-            System.out.println(classType.getName());
+            writeFile(templateType, classType.getName(), stringWriter);
         }
     }
 
+    private List<MemberType> getFieldList(ClassType classType) {
+        Map<String, MemberType> map = new TreeMap<>();
+        if (!classType.getMember().isEmpty()) {
+            for (MemberType memberType : classType.getMember()) {
+                map.put(memberType.getName(), memberType);
+            }
+        }
+        if (isNotBlank(classType.getImplements())) {
+            String[] intfs = classType.getImplements().replace(" ", "").split(",");
+            for (String intf : intfs) {
+                InterfaceType interfaceType = interfaces.get(intf);
+                System.out.println(intf);
+                if (!interfaceType.getMember().isEmpty()) {
+                    for (MemberType memberType : interfaceType.getMember()) {
+                        map.put(memberType.getName(), memberType);
+                    }
+                }
+                List<InterfaceType> inherited = superInterfaceInheritations.get(interfaceType);
+                if (inherited != null && !inherited.isEmpty()) {
+                    for (InterfaceType interfaceType1 : inherited) {
+                        if (!interfaceType1.getMember().isEmpty()) {
+                            for (MemberType memberType : interfaceType1.getMember()) {
+                                map.put(memberType.getName(), memberType);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
     private void processEnum(EnumType enumType) throws IOException {
-        Set<String> templateNames = templatesByType.get(Types.ENUM);
-        for (String templateName : templateNames) {
+        Set<TemplateType> templateTypes = templatesByType.get(Types.ENUM);
+        for (TemplateType templateType  : templateTypes) {
+            String templateName = templateType.getName();
             VelocityEngine velocityEngine = new VelocityEngine();
             velocityEngine.init();
             Template template = velocityEngine.getTemplate(templateName);
-            VelocityContext velocityContext = new VelocityContext();
-            velocityContext.put("package", mainPackage);
+            VelocityContext velocityContext = createVelocityContext();
             if (templateName.contains("test")) {
                 velocityContext.put("testClassname", enumType.getName() + "Test");
             }
@@ -161,18 +368,9 @@ public class Generator {
             velocityContext.put("classname", enumType.getName());
             velocityContext.put("constlist", enumType.getConst());
             velocityContext.put("implements", enumType.getImplements());
-            velocityContext.put("StringUtils", StringUtils.class);
-            velocityContext.put("Utils", Utils.class);
-            velocityContext.put("modelType", modelType);
-            velocityContext.put("generator", this);
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
-            if (templateName.contains("test")) {
-                FileUtils.write(new File(testOutDir, enumType.getName() + "Test.java"), stringWriter.toString(), "UTF-8");
-            } else {
-                FileUtils.write(new File(outDir, enumType.getName() + ".java"), stringWriter.toString(), "UTF-8");
-            }
-            System.out.println(enumType.getName());
+            writeFile(templateType, enumType.getName(), stringWriter);
         }
     }
 

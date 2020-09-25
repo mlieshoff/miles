@@ -1,0 +1,21 @@
+package ${package}.${templatePackageAdapter};
+
+import ${basepackage}.common.AbstractEnumXmlAdapter;
+
+import ${package}.${templatePackageEnum}.${classname};
+
+#set($type = "")
+#set($useValue = false)
+#foreach( $const in $constlist )
+  #set($type = $const.type)
+  #if($const.value && !$useValue)#set($useValue = true)#end
+#end
+
+public class ${classname}XmlAdapter extends AbstractEnumXmlAdapter<${Utils.getJavaWrapperName($type)}, $classname> {
+
+  @Override
+  public $classname forIdentifier(${Utils.getJavaWrapperName($type)} identifier) {
+    return identifier == null ? null : ${classname}.forIdentifier(identifier);
+  }
+
+}

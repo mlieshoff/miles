@@ -1,0 +1,106 @@
+#if($modelType.useLicense)
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#end
+package $package;
+
+#if($modelType.useGenerated)
+import javax.annotation.Generated;
+#end
+
+import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+#if(!$extends.startsWith("map(") && !$extends.startsWith("list("))
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+#end
+import ${package}.${templatePackageEnum}.*;
+import ${package}.${templatePackageAdapter}.*;
+
+#if($class.deprecated)
+@Deprecated
+#end
+#if($modelType.useGenerated)
+@Generated("org.mili.generator")
+#end
+#if(not $class.synthetic)
+@XmlRootElement(name = "${Utils.getNameOrAlias($class)}")
+#end
+@XmlAccessorType(XmlAccessType.FIELD)
+@Data
+@Getter
+@Setter
+@ToString
+#if(${StringUtils.isBlank($class.typeInfo)})
+@NoArgsConstructor
+#end
+public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} #end#if($implements)implements $implements #end{
+#foreach( $const in $constlist )
+
+    #if($field.deprecated)
+    @Deprecated
+    #end
+    public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
+#end
+
+#foreach( $field in $fieldlist )
+    #set($genericType = ${generator.getGenericType($field)})
+    #if($field.deprecated)
+    @Deprecated
+    #end
+    #if(${Utils.isCollection($field.type)})
+        #if (${StringUtils.isNotBlank($field.wraps)})
+    @XmlElementWrapper(name = "${Utils.getNameOrAlias($field)}")
+    @XmlElement(name = "$field.wraps")
+        #else
+    @XmlElement(name = "${Utils.getNameOrAlias($field)}")
+        #end
+    #elseif($field.synthetic)
+    @XmlValue
+    #elseif($field.attribute)
+    @XmlAttribute(name = "${Utils.getNameOrAlias($field)}")
+    #else
+    @XmlElement(name = "${Utils.getNameOrAlias($field)}")
+    #end
+    #if(${StringUtils.isNotBlank($field.serializer)})
+    @XmlJavaTypeAdapter($field.serializer)
+    #end
+    private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#if(${field.attribute}) = "$field.defaultValue"#elseif(${StringUtils.isNotBlank($field.defaultValue)}) = $field.defaultValue#end;
+
+#end
+#if(${StringUtils.isNotBlank($class.typeInfo)})
+    @XmlAttribute(name = "type")
+    private String type;
+
+    public $classname() {
+        setType("$class.typeInfo");
+    }
+
+#end
+}

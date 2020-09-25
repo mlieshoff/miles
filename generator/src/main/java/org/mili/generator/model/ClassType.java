@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="implements" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="deprecated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *       &lt;attribute name="synthetic" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="typeInfo" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -58,6 +59,8 @@ public class ClassType {
     protected Boolean deprecated;
     @XmlAttribute(name = "synthetic")
     protected Boolean synthetic;
+    @XmlAttribute(name = "typeInfo")
+    protected String typeInfo;
 
     /**
      * Gets the value of the const property.
@@ -267,6 +270,30 @@ public class ClassType {
      */
     public void setSynthetic(Boolean value) {
         this.synthetic = value;
+    }
+
+    /**
+     * Ruft den Wert der typeInfo-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTypeInfo() {
+        return typeInfo;
+    }
+
+    /**
+     * Legt den Wert der typeInfo-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTypeInfo(String value) {
+        this.typeInfo = value;
     }
 
 }

@@ -5,6 +5,7 @@ package org.mili.generator;
  */
 public enum Types {
 
+    INTERFACE,
     CLASS,
     ENUM;
 

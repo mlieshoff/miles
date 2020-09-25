@@ -9,6 +9,7 @@
             <xs:element type="forType" name="for" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="package"/>
+        <xs:attribute type="xs:string" name="basePackage"/>
     </xs:complexType>
     <xs:complexType name="forType">
         <xs:sequence>
@@ -17,6 +18,10 @@
         <xs:attribute type="xs:string" name="type"/>
     </xs:complexType>
     <xs:complexType name="templateType">
+        <xs:attribute type="xs:string" name="id"/>
         <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="suffix"/>
+        <xs:attribute type="xs:boolean" name="test" default="false"/>
+        <xs:attribute type="xs:string" name="package"/>
     </xs:complexType>
 </xs:schema>
