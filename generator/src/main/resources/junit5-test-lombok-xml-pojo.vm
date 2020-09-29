@@ -1,0 +1,79 @@
+#if($modelType.useLicense)
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#end
+package ${package};
+
+#foreach( $field in $superrequiredfieldswithoutdefault )
+import static ${basepackage}.TestSamples.${StringUtils.upperCase($field.name)};
+#end
+#foreach( $field in $requiredfieldswithoutdefault )
+import static ${basepackage}.TestSamples.${StringUtils.upperCase($field.name)};
+#end
+#foreach( $field in $fieldlist )
+  #if($StringUtils.isNotBlank($field.defaultValue) and $field.defaultValue != 'null')
+import static ${basepackage}.TestSamples.${StringUtils.upperCase($field.name)};
+  #end
+#end
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+#if($modelType.useGenerated)
+import javax.annotation.Generated;
+#end
+import org.junit.jupiter.api.Test;
+
+#if($modelType.useGenerated)
+@Generated("org.mili.generator")
+#end
+class ${classname}Test {
+
+  @Test
+  void construct_whenCalled_shouldSetValues() {
+    ${classname} unitUnderTest = new ${classname}();
+
+    #foreach( $field in $fieldlist )
+      #if($StringUtils.isNotBlank($field.defaultValue) and $field.defaultValue != 'null')
+    assertEquals(${StringUtils.upperCase($field.name)}, unitUnderTest.get${StringUtils.capitalize($Utils.getJavaName($field.name))}());
+      #else
+    assertNull(unitUnderTest.get${StringUtils.capitalize($Utils.getJavaName($field.name))}());
+      #end
+    #end
+  }
+
+#set($createTest = false)
+#foreach( $field in $superrequiredfieldswithoutdefault )
+  #set($createTest = true)
+#end
+#foreach( $field in $requiredfieldswithoutdefault )
+  #set($createTest = true)
+#end
+#if($createTest)
+  @Test
+  void create_whenCalled_thenSetRequiredFieldsWithoutDefault() {
+    ${classname} unitUnderTest = ${classname}.create${classname}(#set($superFirst = true)#foreach( $field in $superrequiredfieldswithoutdefault )#if($superFirst == false), #else#set($superFirst = false)#end${StringUtils.upperCase($field.name)}#end#if($superFirst == false),#end#set($first = true)#foreach( $field in $requiredfieldswithoutdefault )#if($first == false), #else#set($first = false)#end${StringUtils.upperCase($field.name)}#end);
+
+    #foreach( $field in $superrequiredfieldswithoutdefault )
+    assertEquals(${StringUtils.upperCase($field.name)}, unitUnderTest.get${StringUtils.capitalize($Utils.getJavaName($field.name))}());
+    #end
+    #foreach( $field in $requiredfieldswithoutdefault )
+    assertEquals(${StringUtils.upperCase($field.name)}, unitUnderTest.get${StringUtils.capitalize($Utils.getJavaName($field.name))}());
+    #end
+  }
+
+#end
+}

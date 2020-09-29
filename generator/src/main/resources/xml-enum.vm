@@ -1,11 +1,10 @@
 package ${package}.${templatePackageEnum};
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-
-import java.util.Map;
+import static ${basepackage}.common.EnumHelper.createIdentifierLookupMap;
 
 import ${basepackage}.common.Identifiable;
+
+import java.util.Map;
 
 #foreach( $const in $constlist )
   #set($type = $const.type)
@@ -21,7 +20,7 @@ public enum $classname implements Identifiable<$type> {
   #if($const.deprecated)
   @Deprecated
   #end
-  $const.name#if($const.value)(#if($const.prefix)$const.prefix#[[.getIdentifier()]]# + #end#if($const.type == "String")"$const.value"#else $const.value#end)#end#if($foreach.count < $constlist.size()),
+  $const.name#if($const.value)(#if($const.prefix)$const.prefix#[[.getIdentifier()]]# + #end#if($const.type == "String")"$const.value"#else$const.value#end)#end#if($foreach.count < $constlist.size()),
   #else;
   #end
 #end
@@ -29,15 +28,7 @@ public enum $classname implements Identifiable<$type> {
 #if($useValue)
   private final $type identifier;
 
-  private static final Map<${Utils.getJavaWrapperName($type)}, $classname> LOOKUP_BY_IDENTIFIER;
-
-  static {
-    Builder<${Utils.getJavaWrapperName($type)}, $classname> builder = ImmutableMap.builder();
-      for ($classname value : values()) {
-        builder.put(value.getIdentifier(), value);
-      }
-    LOOKUP_BY_IDENTIFIER = builder.build();
-  }
+  private static final Map<${Utils.getJavaWrapperName($type)}, $classname> LOOKUP_BY_IDENTIFIER = createIdentifierLookupMap(values());
 
   $classname($type identifier) {
     this.identifier = identifier;

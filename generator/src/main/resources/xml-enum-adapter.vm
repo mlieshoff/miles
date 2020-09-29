@@ -1,7 +1,6 @@
 package ${package}.${templatePackageAdapter};
 
 import ${basepackage}.common.AbstractEnumXmlAdapter;
-
 import ${package}.${templatePackageEnum}.${classname};
 
 #set($type = "")

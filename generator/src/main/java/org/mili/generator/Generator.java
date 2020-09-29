@@ -19,6 +19,7 @@ package org.mili.generator;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import org.apache.commons.io.FileUtils;
@@ -43,6 +44,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -315,10 +317,34 @@ public class Generator {
             velocityContext.put("fieldlist", getFieldList(classType));
             velocityContext.put("constlist", classType.getConst());
             velocityContext.put("usedenums", getUsedEnums(classType.getMember()));
+            velocityContext.put("requiredfieldswithoutdefault", getRequiredFieldListWithoutDefaults(classType));
+            velocityContext.put("superrequiredfieldswithoutdefault", getSuperRequiredFieldListWithoutDefaults(classType));
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
             writeFile(templateType, classType.getName(), stringWriter);
         }
+    }
+
+    private List<MemberType> getRequiredFieldListWithoutDefaults(ClassType classType) {
+        List<MemberType> memberTypes = getFieldList(classType);
+        for (Iterator<MemberType> iterator = memberTypes.iterator(); iterator.hasNext(); ) {
+            MemberType memberType = iterator.next();
+            if (!memberType.isRequired() || (memberType.isRequired() && isNotBlank(memberType.getDefaultValue()))) {
+                iterator.remove();
+            }
+        }
+        return memberTypes;
+    }
+
+    private List<MemberType> getSuperRequiredFieldListWithoutDefaults(ClassType classType) {
+        List<MemberType> memberTypes = getSuperClassFieldList(classType);
+        for (Iterator<MemberType> iterator = memberTypes.iterator(); iterator.hasNext(); ) {
+            MemberType memberType = iterator.next();
+            if (!memberType.isRequired() || (memberType.isRequired() && isNotBlank(memberType.getDefaultValue()))) {
+                iterator.remove();
+            }
+        }
+        return memberTypes;
     }
 
     private List<MemberType> getFieldList(ClassType classType) {
@@ -348,6 +374,18 @@ public class Generator {
                         }
                     }
                 }
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    private List<MemberType> getSuperClassFieldList(ClassType classType) {
+        Map<String, MemberType> map = new TreeMap<>();
+        if (isNotBlank(classType.getExtends())) {
+            String superClassName = classType.getExtends();
+            ClassType superClassType = classes.get(superClassName);
+            for (MemberType memberType : getFieldList(superClassType)) {
+                map.put(memberType.getName(), memberType);
             }
         }
         return new ArrayList<>(map.values());

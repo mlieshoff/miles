@@ -18,11 +18,17 @@
 #end
 package $package;
 
+import ${basepackage}.common.BooleanXmlAdapter;
+import ${package}.${templatePackageEnum}.*;
+import ${package}.${templatePackageAdapter}.*;
+
 #if($modelType.useGenerated)
 import javax.annotation.Generated;
-#end
 
+#end
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,13 +41,13 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 #if(!$extends.startsWith("map(") && !$extends.startsWith("list("))
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 #end
-import ${package}.${templatePackageEnum}.*;
-import ${package}.${templatePackageAdapter}.*;
+#if(${StringUtils.isNotBlank($extends)})
+import lombok.EqualsAndHashCode;
+#end
+#if(${StringUtils.isBlank($class.typeInfo)})
+import lombok.NoArgsConstructor;
+#end
 
 #if($class.deprecated)
 @Deprecated
@@ -54,53 +60,73 @@ import ${package}.${templatePackageAdapter}.*;
 #end
 @XmlAccessorType(XmlAccessType.FIELD)
 @Data
-@Getter
-@Setter
-@ToString
 #if(${StringUtils.isBlank($class.typeInfo)})
 @NoArgsConstructor
+#end
+#if(${StringUtils.isNotBlank($extends)})
+@EqualsAndHashCode(callSuper = true)
 #end
 public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} #end#if($implements)implements $implements #end{
 #foreach( $const in $constlist )
 
-    #if($field.deprecated)
-    @Deprecated
-    #end
-    public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
+  #if($field.deprecated)
+  @Deprecated
+  #end
+  public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
 #end
 
 #foreach( $field in $fieldlist )
-    #set($genericType = ${generator.getGenericType($field)})
-    #if($field.deprecated)
-    @Deprecated
-    #end
-    #if(${Utils.isCollection($field.type)})
-        #if (${StringUtils.isNotBlank($field.wraps)})
-    @XmlElementWrapper(name = "${Utils.getNameOrAlias($field)}")
-    @XmlElement(name = "$field.wraps")
-        #else
-    @XmlElement(name = "${Utils.getNameOrAlias($field)}")
-        #end
-    #elseif($field.synthetic)
-    @XmlValue
-    #elseif($field.attribute)
-    @XmlAttribute(name = "${Utils.getNameOrAlias($field)}")
-    #else
-    @XmlElement(name = "${Utils.getNameOrAlias($field)}")
-    #end
-    #if(${StringUtils.isNotBlank($field.serializer)})
-    @XmlJavaTypeAdapter($field.serializer)
-    #end
-    private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#if(${field.attribute}) = "$field.defaultValue"#elseif(${StringUtils.isNotBlank($field.defaultValue)}) = $field.defaultValue#end;
+  #set($genericType = ${generator.getGenericType($field)})
+  #if($field.deprecated)
+  @Deprecated
+  #end
+  #if(${Utils.isCollection($field.type)})
+      #if (${StringUtils.isNotBlank($field.wraps)})
+  @XmlElementWrapper(name = "${Utils.getNameOrAlias($field)}")
+  @XmlElement(name = "$field.wraps")
+      #else
+  @XmlElement(name = "${Utils.getNameOrAlias($field)}")
+      #end
+  #elseif($field.synthetic)
+  @XmlValue
+  #elseif($field.attribute)
+  @XmlAttribute(name = "${Utils.getNameOrAlias($field)}")
+  #else
+  @XmlElement(name = "${Utils.getNameOrAlias($field)}")
+  #end
+  #if(${StringUtils.isNotBlank($field.serializer)})
+  @XmlJavaTypeAdapter($field.serializer)
+  #end
+  private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#if(${field.attribute} and ${StringUtils.isNotBlank($field.defaultValue)}) = "$field.defaultValue"#elseif(${StringUtils.isNotBlank($field.defaultValue)}) = $field.defaultValue#end;
 
 #end
 #if(${StringUtils.isNotBlank($class.typeInfo)})
-    @XmlAttribute(name = "type")
-    private String type;
+  @XmlAttribute(name = "type")
+  private String type;
 
-    public $classname() {
-        setType("$class.typeInfo");
-    }
+  public $classname() {
+    setType("$class.typeInfo");
+  }
 
+#end
+#set($createMethod = false)
+#foreach( $field in $superrequiredfieldswithoutdefault )
+  #set($createMethod = true)
+#end
+#foreach( $field in $requiredfieldswithoutdefault )
+  #set($createMethod = true)
+#end
+#if($createMethod)
+  public static ${classname} create${classname}(#set($superFirst = true)#foreach( $field in $superrequiredfieldswithoutdefault )#if($superFirst == false), #else#set($superFirst = false)#end${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#end#if($superFirst == false),#end#set($first = true)#foreach( $field in $requiredfieldswithoutdefault )#if($first == false), #else#set($first = false)#end${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#end) {
+    ${classname} ${StringUtils.uncapitalize(${classname})} = new ${classname}();
+    #foreach( $field in $superrequiredfieldswithoutdefault )
+    ${StringUtils.uncapitalize(${classname})}.set${StringUtils.capitalize($Utils.getJavaName($field.name))}(${StringUtils.uncapitalize($Utils.getJavaName($field.name))});
+    #end
+    #foreach( $field in $requiredfieldswithoutdefault )
+    ${StringUtils.uncapitalize(${classname})}.set${StringUtils.capitalize($Utils.getJavaName($field.name))}(${StringUtils.uncapitalize($Utils.getJavaName($field.name))});
+    #end
+    return ${StringUtils.uncapitalize(${classname})};
+  }
+    
 #end
 }

@@ -18,14 +18,14 @@
 #end
 package ${package}.${templatePackageAdapter};
 
+import ${basepackage}.common.AbstractEnumXmlAdapter;
+import ${basepackage}.common.AbstractEnumXmlAdapterTest;
+import ${package}.${templatePackageEnum}.${classname};
+
 #if($modelType.useGenerated)
 import javax.annotation.Generated;
+
 #end
-
-import ${package}.${templatePackageEnum}.${classname};
-import ${basepackage}.common.AbstractEnumXmlAdapterTest;
-import ${basepackage}.common.AbstractEnumXmlAdapter;
-
 #if($modelType.useGenerated)
 @Generated("org.mili.generator")
 #end

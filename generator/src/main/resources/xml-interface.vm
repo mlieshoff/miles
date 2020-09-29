@@ -18,13 +18,14 @@
 #end
 package $package;
 
+import ${package}.${templatePackageEnum}.*;
+
 #if($modelType.useGenerated)
 import javax.annotation.Generated;
+
 #end
-
 import java.util.ArrayList;
-
-import ${package}.${templatePackageEnum}.*;
+import java.util.List;
 
 #if($class.deprecated)
 @Deprecated
@@ -33,19 +34,20 @@ import ${package}.${templatePackageEnum}.*;
 @Generated("org.mili.generator")
 #end
 public interface $classname #if($extends)extends ${Utils.getJavaImplType($extends)} #end{
+
 #foreach( $const in $constlist )
+  #if($field.deprecated)
+  @Deprecated
+  #end
+  public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
 
-    #if($field.deprecated)
-    @Deprecated
-    #end
-    public static final $const.type $const.name =#if($const.prefix) $const.value +#end #if($const.type == "String")"$const.value"#else$const.value#end;
 #end
-
 #foreach( $field in $fieldlist )
-    #if($field.deprecated)
-    @Deprecated
-    #end
-    #set($fieldname = ${Utils.getJavaName($field.name)})
-    ${Utils.getJavaType($field.type)} get${StringUtils.capitalize($fieldname)}();
+  #if($field.deprecated)
+  @Deprecated
+  #end
+  #set($fieldname = ${Utils.getJavaName($field.name)})
+  ${Utils.getJavaType($field.type)} get${StringUtils.capitalize($fieldname)}();
+
 #end
 }

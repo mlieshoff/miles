@@ -31,13 +31,13 @@ public class JavaTypeUtils {
             String[] genericTypes = value.replace("map(", "").replace(")", "").split(",");
             String genericType1 = translateDslToJavaWrapperType(genericTypes[0]);
             String genericType2 = translateDslToJavaWrapperType(genericTypes[1]);
-            value = "java.util.Map<" + genericType1 + ", " + genericType2 + ">";
+            value = "Map<" + genericType1 + ", " + genericType2 + ">";
         } else if (value.startsWith("list(")) {
             String genericType = value.replace("list(", "").replace(")", "");
-            value = "java.util.List<" + translateDslToJavaWrapperType(genericType) + ">";
+            value = "List<" + translateDslToJavaWrapperType(genericType) + ">";
         } else if (value.startsWith("set(")) {
             String genericType = value.replace("set(", "").replace(")", "");
-            value = "java.util.Set<" + translateDslToJavaWrapperType(genericType) + ">";
+            value = "Set<" + translateDslToJavaWrapperType(genericType) + ">";
         }
         return value;
     }
@@ -66,12 +66,12 @@ public class JavaTypeUtils {
 
     public static String translateDslToJavaTypeImpl(String value) {
         String specType = translateDslToJavaTypeSpec(value);
-        if (specType.startsWith("java.util.Map")) {
-            return specType.replace("java.util.Map", "java.util.LinkedHashMap");
-        } else if (specType.startsWith("java.util.List")) {
-            return specType.replace("java.util.List", "java.util.ArrayList");
-        } else if (specType.startsWith("java.util.Set")) {
-            return specType.replace("java.util.Set", "java.util.LinkedHashSet");
+        if (specType.startsWith("Map")) {
+            return specType.replace("Map", "LinkedHashMap");
+        } else if (specType.startsWith("List")) {
+            return specType.replace("List", "ArrayList");
+        } else if (specType.startsWith("Set")) {
+            return specType.replace("Set", "LinkedHashSet");
         }
         return specType;
     }
@@ -104,6 +104,9 @@ public class JavaTypeUtils {
             case "Double": return "Double.valueOf(1.41)";
             case "double[]": return "double[]{}";
             case "String": return "\"astring\"";
+        }
+        if (type.contains("Enum")) {
+            return type + ".values()[0]";
         }
         return "new " + type + "()";
     }
