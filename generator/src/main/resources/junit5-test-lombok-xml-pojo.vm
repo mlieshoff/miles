@@ -65,7 +65,7 @@ class ${classname}Test {
 #if($createTest)
   @Test
   void create_whenCalled_thenSetRequiredFieldsWithoutDefault() {
-    ${classname} unitUnderTest = ${classname}.create${classname}(#set($superFirst = true)#foreach( $field in $superrequiredfieldswithoutdefault )#if($superFirst == false), #else#set($superFirst = false)#end${StringUtils.upperCase($field.name)}#end#if($superFirst == false),#end#set($first = true)#foreach( $field in $requiredfieldswithoutdefault )#if($first == false), #else#set($first = false)#end${StringUtils.upperCase($field.name)}#end);
+    ${classname} unitUnderTest = ${classname}.create${classname}(#set($superFirst = true)#foreach( $field in $superrequiredfieldswithoutdefault )#if($superFirst == false), #else#set($superFirst = false)#end${StringUtils.upperCase($field.name)}#end#if($superFirst == false && $requiredfieldswithoutdefault),#end#set($first = true)#foreach( $field in $requiredfieldswithoutdefault )#if($first == false), #else#set($first = false)#end${StringUtils.upperCase($field.name)}#end);
 
     #foreach( $field in $superrequiredfieldswithoutdefault )
     assertEquals(${StringUtils.upperCase($field.name)}, unitUnderTest.get${StringUtils.capitalize($Utils.getJavaName($field.name))}());

@@ -17,7 +17,12 @@ package org.mili.generator;
  * limitations under the License.
  */
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michael Lieshoff
@@ -40,6 +45,25 @@ public class JavaTypeUtils {
             value = "Set<" + translateDslToJavaWrapperType(genericType) + ">";
         }
         return value;
+    }
+
+    public static List<String> getDslGenericType(String value) {
+        List<String> genericTypes = new ArrayList<>();
+        if (isNotBlank(value)) {
+            String[] types = value
+                .replace(" ", "")
+                .replace("map(", "")
+                .replace("list(", "")
+                .replace("set(", "")
+                .replace(")", "")
+                .split("[,]");
+            for (String type : types) {
+                if (isNotBlank(type)) {
+                    genericTypes.add(type);
+                }
+            }
+        }
+        return genericTypes;
     }
 
     public static String translateDslToJavaWrapperType(String value) {

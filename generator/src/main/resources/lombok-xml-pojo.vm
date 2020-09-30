@@ -97,7 +97,7 @@ public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} 
   #if(${StringUtils.isNotBlank($field.serializer)})
   @XmlJavaTypeAdapter($field.serializer)
   #end
-  private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#if(${field.attribute} and ${StringUtils.isNotBlank($field.defaultValue)}) = "$field.defaultValue"#elseif(${StringUtils.isNotBlank($field.defaultValue)}) = $field.defaultValue#end;
+  private ${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#if(${field.attribute} and ${StringUtils.isNotBlank($field.defaultValue)}) = "$field.defaultValue"#elseif(${StringUtils.isNotBlank($field.defaultValue)} && ${field.defaultValue} != 'null') = $field.defaultValue#end;
 
 #end
 #if(${StringUtils.isNotBlank($class.typeInfo)})
@@ -117,7 +117,7 @@ public class $classname #if($extends)extends ${Utils.getJavaImplType($extends)} 
   #set($createMethod = true)
 #end
 #if($createMethod)
-  public static ${classname} create${classname}(#set($superFirst = true)#foreach( $field in $superrequiredfieldswithoutdefault )#if($superFirst == false), #else#set($superFirst = false)#end${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#end#if($superFirst == false),#end#set($first = true)#foreach( $field in $requiredfieldswithoutdefault )#if($first == false), #else#set($first = false)#end${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#end) {
+  public static ${classname} create${classname}(#set($superFirst = true)#foreach( $field in $superrequiredfieldswithoutdefault )#if($superFirst == false), #else#set($superFirst = false)#end${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#end#if($superFirst == false && $requiredfieldswithoutdefault),#end#set($first = true)#foreach( $field in $requiredfieldswithoutdefault )#if($first == false), #else#set($first = false)#end${Utils.getJavaType($field.type)} ${Utils.getJavaName($field.name)}#end) {
     ${classname} ${StringUtils.uncapitalize(${classname})} = new ${classname}();
     #foreach( $field in $superrequiredfieldswithoutdefault )
     ${StringUtils.uncapitalize(${classname})}.set${StringUtils.capitalize($Utils.getJavaName($field.name))}(${StringUtils.uncapitalize($Utils.getJavaName($field.name))});

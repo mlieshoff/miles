@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
 
@@ -74,8 +75,9 @@ public class Generator {
     private Map<String, ClassType> classes = new TreeMap<>();
     private Map<String, InterfaceType> interfaces = new TreeMap<>();
     private Map<String, EnumType> enums = new TreeMap<>();
-
     private Map<String, Object> baseContext = new HashMap<>();
+
+    private Set<String> usedTypes = new TreeSet<>();
 
     public void start(String outDirName, String testOutDirName, String configFilename, String modelFilename) throws IOException {
         outDir = new File(outDirName);
@@ -234,6 +236,7 @@ public class Generator {
     }
 
     private void processInterface(InterfaceType interfaceType) throws IOException {
+        fillUsedTypes(interfaceType.getMember());
         Set<TemplateType> templateTypes = templatesByType.get(Types.INTERFACE);
         for (TemplateType templateType  : templateTypes) {
             String templateName = templateType.getName();
@@ -251,10 +254,43 @@ public class Generator {
             velocityContext.put("fieldlist", interfaceType.getMember());
             velocityContext.put("constlist", interfaceType.getConst());
             velocityContext.put("usedenums", getUsedEnums(interfaceType.getMember()));
+            velocityContext.put("usedtypes", usedTypes);
             StringWriter stringWriter = new StringWriter();
             template.merge(velocityContext, stringWriter);
             writeFile(templateType, interfaceType.getName(), stringWriter);
         }
+    }
+
+    private void fillUsedTypes(List<MemberType> memberTypes) {
+        usedTypes.clear();
+        for (MemberType memberType : memberTypes) {
+            String typeName = JavaTypeUtils.translateDslToJavaTypeSpec(memberType.getType());
+            if (typeName.startsWith("Map")) {
+                usedTypes.add("Map");
+                usedTypes.add("LinkedHashMap");
+            } else if (typeName.startsWith("List")) {
+                usedTypes.add("List");
+                usedTypes.add("ArrayList");
+            } else if (typeName.startsWith("Set")) {
+                usedTypes.add("Set");
+                usedTypes.add("LinkedHashSet");
+            } else {
+                usedTypes.add(typeName);
+            }
+            List<String> genericTypes = JavaTypeUtils.getDslGenericType(typeName);
+            if (!genericTypes.isEmpty()) {
+                usedTypes.addAll(genericTypes);
+            }
+        }
+        usedTypes.remove("Object");
+        usedTypes.remove("String");
+        usedTypes.remove("Boolean");
+        usedTypes.remove("Char");
+        usedTypes.remove("Short");
+        usedTypes.remove("Integer");
+        usedTypes.remove("Long");
+        usedTypes.remove("Double");
+        usedTypes.remove("Float");
     }
 
     private Collection<MemberType> getUsedEnums(List<MemberType> memberTypes) {
@@ -300,6 +336,7 @@ public class Generator {
     }
 
     private void processClass(ClassType classType) throws IOException {
+        fillUsedTypes(classType.getMember());
         Set<TemplateType> templateTypes = templatesByType.get(Types.CLASS);
         for (TemplateType templateType  : templateTypes) {
             String templateName = templateType.getName();
@@ -316,6 +353,7 @@ public class Generator {
             velocityContext.put("implements", classType.getImplements());
             velocityContext.put("fieldlist", getFieldList(classType));
             velocityContext.put("constlist", classType.getConst());
+            velocityContext.put("usedtypes", usedTypes);
             velocityContext.put("usedenums", getUsedEnums(classType.getMember()));
             velocityContext.put("requiredfieldswithoutdefault", getRequiredFieldListWithoutDefaults(classType));
             velocityContext.put("superrequiredfieldswithoutdefault", getSuperRequiredFieldListWithoutDefaults(classType));
@@ -392,6 +430,7 @@ public class Generator {
     }
 
     private void processEnum(EnumType enumType) throws IOException {
+        usedTypes.clear();
         Set<TemplateType> templateTypes = templatesByType.get(Types.ENUM);
         for (TemplateType templateType  : templateTypes) {
             String templateName = templateType.getName();
