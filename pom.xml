@@ -86,8 +86,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>21</source>
+                    <target>21</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -149,7 +149,7 @@
                             <excludePackageNames>*.internal*</excludePackageNames>
                             <detectJavaApiLink>false</detectJavaApiLink>
                             <detectLinks>false</detectLinks>
-                            <source>1.7</source>
+                            <source>21</source>
                             <links>
                                 <link>http://java.sun.com/j2se/1.7.0/docs/api/</link>
                             </links>

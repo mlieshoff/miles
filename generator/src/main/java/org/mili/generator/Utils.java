@@ -21,7 +21,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.mili.generator.JavaTypeUtils.getPrimitiveName;
 import static org.mili.generator.JavaTypeUtils.getWrapperName;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.mili.generator.model.ClassType;
